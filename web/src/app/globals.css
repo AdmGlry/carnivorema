@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #fbf7f2;
+  --foreground: #1c1410;
+  --card: #ffffff;
+  --muted: #6b5d55;
+  --border: #eadfd5;
+  --accent: #b3261e;
+  --accent-soft: #fbe4e1;
+}
+
+.dark {
+  --background: #120d0b;
+  --foreground: #f5ece6;
+  --card: #1d1613;
+  --muted: #b3a39a;
+  --border: #33271f;
+  --accent: #ef5a4f;
+  --accent-soft: #3a1714;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
