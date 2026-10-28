@@ -1,10 +1,38 @@
 import Link from "next/link";
 import Planner from "@/components/Planner";
-import ThemeToggle from "@/components/ThemeToggle";
-import { BRAND, BRAND_TLD } from "@/lib/config";
+import { BRAND } from "@/lib/config";
 import { PRICE_DATE, PRICE_SOURCE, categoryLabels, foods, mad, pricePerKg } from "@/lib/foods";
 import { diets, recipeAllowed } from "@/lib/nutrition";
 import { mealLabels, recipeNutrition, recipes } from "@/lib/recipes";
+import JsonLd from "./_components/JsonLd";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, compatibleDiets } from "./_site";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: SITE_NAME, url: SITE_URL, logo: `${SITE_URL}/icon/512` },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      name: SITE_NAME,
+      url: SITE_URL,
+      inLanguage: "fr-MA",
+      description: SITE_DESCRIPTION,
+      publisher: { "@id": `${SITE_URL}/#organization` },
+    },
+    {
+      "@type": "SoftwareApplication",
+      name: SITE_NAME,
+      applicationCategory: "HealthApplication",
+      operatingSystem: "Web, iOS, Android",
+      url: SITE_URL,
+      description: SITE_DESCRIPTION,
+      inLanguage: "fr-MA",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "MAD" },
+      publisher: { "@id": `${SITE_URL}/#organization` },
+    },
+  ],
+};
 
 const stores = [
   { name: "Carrefour", status: "Prix réels relevés" },
@@ -82,29 +110,9 @@ export default function Home() {
 
   return (
     <>
-      {/* En-tête */}
-      <header className="sticky top-0 z-10 border-b border-border bg-background/90 backdrop-blur">
-        <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-          <Link href="/" className="text-lg font-extrabold">
-            ⚖️ {BRAND}
-            <span className="text-accent">{BRAND_TLD}</span>
-          </Link>
-          <div className="flex items-center gap-3">
-            <a href="#features" className="hidden text-sm sm:inline">Fonctionnalités</a>
-            <a href="#regimes" className="hidden text-sm sm:inline">Régimes</a>
-            <a href="#prix" className="hidden text-sm sm:inline">Prix</a>
-            <ThemeToggle />
-            <a href="#essayer" className="rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-white">
-              Mon menu
-            </a>
-          </div>
-        </nav>
-      </header>
-
-      <main>
         {/* Hero */}
         <section className="mx-auto max-w-6xl px-4 pb-12 pt-16 text-center sm:pt-24">
-          <span className="rounded-full bg-accent-soft px-3 py-1 text-sm font-medium text-accent">🇲🇦 Pensé pour le Maroc</span>
+          <span className="rounded-full bg-accent-soft px-3 py-1 text-sm font-medium text-accent"><span aria-hidden="true">🇲🇦 </span>Pensé pour le Maroc</span>
           <h1 className="mx-auto mt-6 max-w-4xl text-4xl font-extrabold leading-tight sm:text-6xl">
             Mange selon ton corps, ton régime <span className="text-accent">et ton budget</span>
           </h1>
@@ -113,7 +121,7 @@ export default function Home() {
             semaine selon ton régime et te donne la liste de courses au vrai prix de ton supermarché.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <a href="#essayer" className="rounded-full bg-accent px-6 py-3 font-semibold text-white hover:opacity-90">
+            <a href="#essayer" className="rounded-full bg-accent px-6 py-3 font-semibold text-on-accent hover:opacity-90">
               Calculer mon menu gratuitement
             </a>
             <a href="#regimes" className="rounded-full border border-border px-6 py-3 font-semibold">
@@ -208,12 +216,12 @@ export default function Home() {
             {diets.map((d) => {
               const count = recipes.filter((r) => recipeAllowed(r, { diet: d.id, glutenFree: false, lactoseFree: false })).length;
               return (
-                <div key={d.id} className="rounded-2xl border border-border bg-card p-5">
-                  <p className="text-2xl">{d.emoji}</p>
-                  <p className="mt-2 font-bold">{d.name}</p>
+                <Link key={d.id} href={`/regimes/${d.id}`} className="rounded-2xl border border-border bg-card p-5 hover:border-accent">
+                  <p className="text-2xl" aria-hidden="true">{d.emoji}</p>
+                  <h3 className="mt-2 font-bold">{d.name}</h3>
                   <p className="mt-1 text-sm text-muted">{d.description}</p>
-                  <p className="mt-3 text-xs font-semibold text-accent">{count} recettes compatibles</p>
-                </div>
+                  <p className="mt-3 text-xs font-semibold text-accent">{count} recettes compatibles →</p>
+                </Link>
               );
             })}
           </div>
@@ -223,32 +231,34 @@ export default function Home() {
         <Section id="prix" kicker="Prix de la semaine" title="Les mêmes courses n'ont pas le même prix partout.">
           <div className="overflow-x-auto rounded-2xl border border-border bg-card">
             <table className="w-full text-left text-sm">
+              <caption className="sr-only">Les deux produits les moins chers au kilo de chaque rayon, relevés le {PRICE_DATE}</caption>
               <thead className="border-b border-border text-muted">
                 <tr>
-                  <th className="p-4">Produit</th>
-                  <th className="p-4">Rayon</th>
-                  <th className="p-4 text-right">Prix affiché</th>
-                  <th className="p-4 text-right">Prix au kg</th>
+                  <th scope="col" className="p-3 sm:p-4">Produit</th>
+                  <th scope="col" className="hidden p-3 sm:p-4 sm:table-cell">Rayon</th>
+                  <th scope="col" className="p-3 sm:p-4 text-right">Prix affiché</th>
+                  <th scope="col" className="p-3 sm:p-4 text-right">Prix au kg</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {priceSample.map((f) => (
                   <tr key={f.id}>
-                    <td className="p-4">
+                    <td className="p-3 sm:p-4">
                       {f.name}
                       {f.promo && <span className="ml-2 rounded bg-accent-soft px-1.5 py-0.5 text-xs text-accent">{f.promo}</span>}
                     </td>
-                    <td className="p-4 text-muted">{categoryLabels[f.category]}</td>
-                    <td className="whitespace-nowrap p-4 text-right">
-                      {mad(f.priceMad)} <span className="text-muted">/ {f.packLabel}</span>
+                    <td className="hidden p-3 sm:p-4 text-muted sm:table-cell">{categoryLabels[f.category]}</td>
+                    <td className="whitespace-nowrap p-3 sm:p-4 text-right">
+                      {mad(f.priceMad)} <span className="block text-xs text-muted sm:inline sm:text-sm">/ {f.packLabel}</span>
                     </td>
-                    <td className="whitespace-nowrap p-4 text-right font-semibold">{mad(pricePerKg(f))}</td>
+                    <td className="whitespace-nowrap p-3 sm:p-4 text-right font-semibold">{mad(pricePerKg(f))}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
           <p className="mt-3 text-xs text-muted">Prix relevés en ligne sur {PRICE_SOURCE} le {PRICE_DATE}. Marques © leurs propriétaires respectifs.</p>
+          <Link href="/prix" className="mt-4 inline-block font-semibold text-accent">Voir tous les prix de la semaine →</Link>
           <ul className="mt-8 grid gap-3 sm:grid-cols-3">
             {stores.map((s) => (
               <li key={s.name} className="flex justify-between rounded-xl border border-border bg-card px-4 py-3 text-sm">
@@ -263,33 +273,35 @@ export default function Home() {
         <Section kicker="Ta réserve" title={`${recipes.length} recettes, toutes chiffrées.`}>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {withNutrition.map(({ r, n }) => {
-              const compatible = diets.filter((d) => recipeAllowed(r, { diet: d.id, glutenFree: false, lactoseFree: false }));
+              const compatible = compatibleDiets(r);
               return (
-                <div key={r.id} className="flex flex-col rounded-2xl border border-border bg-card p-4">
+                <Link key={r.id} href={`/recettes/${r.id}`} className="flex flex-col rounded-2xl border border-border bg-card p-4 hover:border-accent">
                   <span className="text-xs font-semibold uppercase text-accent">{mealLabels[r.meal]}</span>
-                  <p className="mt-1 font-bold">{r.name}</p>
+                  <h3 className="mt-1 font-bold">{r.name}</h3>
                   <p className="mt-2 text-xs text-muted">
                     {r.minutes} min · {Math.round(n.kcal)} kcal · {Math.round(n.protein)} g prot.
                   </p>
                   <p className="mt-1 font-semibold">{mad(n.cost)} /pers</p>
-                  <p className="mt-auto pt-3 text-sm" title={compatible.map((d) => d.name).join(", ")}>
-                    {compatible.map((d) => d.emoji).join(" ")}
+                  <p className="mt-auto pt-3 text-sm" aria-label={`Régimes compatibles : ${compatible.map((d) => d.name).join(", ")}`}>
+                    <span aria-hidden="true">{compatible.map((d) => d.emoji).join(" ")}</span>
                   </p>
-                </div>
+                </Link>
               );
             })}
           </div>
+          <Link href="/recettes" className="mt-6 inline-block font-semibold text-accent">Filtrer les recettes par régime →</Link>
         </Section>
 
         {/* Bêta */}
         <section id="beta" className="mx-auto max-w-6xl px-4 py-16">
-          <div className="rounded-3xl bg-accent px-6 py-12 text-center text-white">
+          <div className="rounded-3xl bg-accent px-6 py-12 text-center text-on-accent">
             <h2 className="text-3xl font-bold sm:text-4xl">Sois parmi les premiers</h2>
             <p className="mx-auto mt-3 max-w-xl opacity-90">
               La bêta ouvre bientôt à Casablanca, Rabat et Marrakech : menus sauvegardés, partage en famille, alertes promo. Les premiers inscrits
               auront un accès premium offert.
             </p>
-            <a href="#beta" className="mt-6 inline-block rounded-full bg-white px-6 py-3 font-semibold text-accent">
+            {/* WAITLIST_FORM : remplacer ce bouton par <WaitlistForm /> quand le composant sera livré. */}
+            <a href="#beta" className="mt-6 inline-block rounded-full bg-background px-6 py-3 font-semibold text-accent">
               Rejoindre la liste d&apos;attente
             </a>
           </div>
@@ -302,30 +314,14 @@ export default function Home() {
               <details key={f.q} className="group rounded-xl border border-border bg-card p-5">
                 <summary className="cursor-pointer list-none font-semibold">
                   {f.q}
-                  <span className="float-right text-accent group-open:rotate-45">+</span>
+                  <span aria-hidden="true" className="float-right text-accent group-open:rotate-45">+</span>
                 </summary>
                 <p className="mt-3 text-muted">{f.a}</p>
               </details>
             ))}
           </div>
         </Section>
-      </main>
-
-      {/* Pied de page */}
-      <footer className="border-t border-border">
-        <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 text-sm text-muted sm:flex-row sm:justify-between">
-          <div>
-            <p className="font-extrabold text-foreground">⚖️ {BRAND}{BRAND_TLD}</p>
-            <p className="mt-1">© {new Date().getFullYear()} {BRAND} — Tous droits réservés.</p>
-          </div>
-          <nav className="flex flex-wrap gap-4">
-            <Link href="/legal/mentions-legales">Mentions légales</Link>
-            <Link href="/legal/cgu">CGU</Link>
-            <Link href="/legal/cgv">CGV</Link>
-            <Link href="/legal/confidentialite">Confidentialité</Link>
-          </nav>
-        </div>
-      </footer>
+      <JsonLd data={jsonLd} />
     </>
   );
 }

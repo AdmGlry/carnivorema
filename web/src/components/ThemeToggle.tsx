@@ -10,12 +10,13 @@ export default function ThemeToggle() {
 
   return (
     <button
+      type="button"
       onClick={toggle}
-      aria-label="Basculer le thème"
+      aria-label="Basculer entre le thème clair et le thème sombre"
       className="rounded-full border border-border px-3 py-1.5 text-sm hover:bg-card"
     >
-      <span className="dark:hidden">🌙</span>
-      <span className="hidden dark:inline">☀️</span>
+      <span aria-hidden="true" className="dark:hidden">🌙</span>
+      <span aria-hidden="true" className="hidden dark:inline">☀️</span>
     </button>
   );
 }
