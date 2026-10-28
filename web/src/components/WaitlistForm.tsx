@@ -16,9 +16,9 @@ export default function WaitlistForm({ tone = "default", source = "landing" }: {
 
   const onAccent = tone === "onAccent";
   const field = onAccent
-    ? "w-full rounded-full border border-white/40 bg-white px-4 py-3 text-foreground placeholder:text-muted"
+    ? "w-full rounded-full border border-on-accent/40 bg-background px-4 py-3 text-foreground placeholder:text-muted"
     : "w-full rounded-full border border-border bg-card px-4 py-3 placeholder:text-muted";
-  const button = onAccent ? "bg-white text-accent" : "bg-accent text-white";
+  const button = onAccent ? "bg-background text-accent" : "bg-accent text-on-accent";
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -89,7 +89,7 @@ export default function WaitlistForm({ tone = "default", source = "landing" }: {
       <p
         role="status"
         aria-live="polite"
-        className={`mt-3 min-h-5 text-center text-sm ${onAccent ? "text-white" : status === "error" ? "text-accent" : "text-muted"}`}
+        className={`mt-3 min-h-5 text-center text-sm ${onAccent ? "text-on-accent" : status === "error" ? "text-accent" : "text-muted"}`}
       >
         {status === "success" && "✅ "}
         {status === "error" && "⚠️ "}

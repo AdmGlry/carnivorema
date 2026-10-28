@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Planner from "@/components/Planner";
+import WaitlistForm from "@/components/WaitlistForm";
 import { BRAND } from "@/lib/config";
 import { PRICE_DATE, PRICE_SOURCE, categoryLabels, foods, mad, pricePerKg } from "@/lib/foods";
 import { diets, recipeAllowed } from "@/lib/nutrition";
@@ -300,10 +301,9 @@ export default function Home() {
               La bêta ouvre bientôt à Casablanca, Rabat et Marrakech : menus sauvegardés, partage en famille, alertes promo. Les premiers inscrits
               auront un accès premium offert.
             </p>
-            {/* WAITLIST_FORM : remplacer ce bouton par <WaitlistForm /> quand le composant sera livré. */}
-            <a href="#beta" className="mt-6 inline-block rounded-full bg-background px-6 py-3 font-semibold text-accent">
-              Rejoindre la liste d&apos;attente
-            </a>
+            <div className="mx-auto mt-6 max-w-md">
+              <WaitlistForm tone="onAccent" source="landing-beta" />
+            </div>
           </div>
         </section>
 
