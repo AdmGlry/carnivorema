@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Carnivore.ma — mange de la viande, maîtrise ton budget",
+  title: "Mizan.ma — mange selon ton corps, ton régime et ton budget",
   description:
-    "Menus carnivores marocains chiffrés avec les vrais prix des supermarchés, liste de courses et comparateur d'enseignes.",
+    "Calcul de tes besoins, menus pour tous les régimes et liste de courses au vrai prix des supermarchés marocains.",
 };
 
 // Applique le thème avant le premier rendu pour éviter le flash.

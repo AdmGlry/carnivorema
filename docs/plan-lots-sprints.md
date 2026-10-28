@@ -1,112 +1,106 @@
-# Carnivore.ma : plan des lots et des sprints
+# Mizan.ma : plan des lots et des sprints
 
-Objectif : le planificateur de repas carnivores de référence au Maroc, avec les **vrais prix** des supermarchés, une liste de courses, l'achat en un clic et des revenus issus des partenariats et de l'affiliation.
+> « Mizan » (ميزان) = la balance : ton budget **et** ton poids. Nom de travail, modifiable dans `web/src/lib/config.ts`.
 
-- **Stack** : Next.js (App Router) + Tailwind, Supabase (base, auth, stockage), scrapers Node/Playwright exécutés en tâche planifiée (GitHub Actions ou Supabase cron), déploiement Vercel.
-- **Sprints** de 2 semaines. Équipe de référence : 1 à 2 développeurs + toi (produit, contenu, partenariats).
+**Objectif** : la référence au Maroc pour **manger selon son budget, son régime et son corps**. L'utilisateur entre poids, taille, âge, activité et objectif (perdre, maintenir, prendre). Il reçoit ses besoins (calories, macros), un menu de la semaine adapté à son régime et une liste de courses au **vrai prix** des supermarchés marocains.
+
+**Face à Planivore** : eux font du budget seulement, avec des prix moyens estimés et des recettes générales. Nous ajoutons la nutrition personnalisée, 8 régimes, les prix réels et l'achat en un clic.
+
+- **Stack** : Next.js + Tailwind (fait), Supabase (base, auth), scrapers Node/Playwright en tâche planifiée, déploiement Vercel.
+- **Sprints** de 2 semaines.
 
 ---
 
 ## Les lots
 
-| Lot | Contenu | Pourquoi |
-|---|---|---|
-| **L0 – Fondations** | Repo, landing page, design, domaine, analytics, mentions légales | Être en ligne et capter des inscrits dès le début |
-| **L1 – Données de prix** | Scrapers Bringo (Carrefour), Glovo (Marjane), normalisation au prix/kg, historique des prix | Notre avantage n°1 face à Planivore, qui n'utilise que des moyennes estimées |
-| **L2 – Recettes** | Base de recettes carnivores marocaines, ingrédients reliés aux produits, coût par personne calculé automatiquement | Le contenu qui fait revenir les gens |
-| **L3 – Comptes et profil** | Inscription, profil foyer (personnes, objectif, ville, enseigne, budget en MAD) | Personnalisation |
-| **L4 – Menu et liste de courses** | Génération du menu dans le budget, remplacement de plats, liste triée par rayon, partage avec le foyer | Le cœur du produit (parité avec Planivore) |
-| **L5 – Comparateur et alertes** | Comparaison du même panier entre enseignes, alertes promo viande, page publique « Prix de la viande au Maroc » | Différenciation + acquisition par Google |
-| **L6 – Monétisation** | Freemium + abonnement (CMI / Stripe / WHOP), liens d'achat Bringo/Glovo, boucheries partenaires, codes promo | Revenus |
-| **L7 – Croissance** | Darija / arabe, application installable sur mobile (PWA), programme ambassadeurs (influenceurs fitness), notifications WhatsApp | Passage à l'échelle |
+| Lot | Contenu |
+|---|---|
+| **L0 – Fondations** | Landing page, design, domaine, analytics, pages légales, liste d'attente |
+| **L1 – Données de prix** | Scrapers Bringo (Carrefour), Glovo (Marjane), etc. ; prix/kg ; historique des prix |
+| **L2 – Nutrition** | Valeurs nutritionnelles de chaque produit, calcul des besoins (Mifflin-St Jeor + activité + objectif), macros par régime, garde-fous santé |
+| **L3 – Recettes** | Base de recettes marocaines et internationales pour tous les régimes : petit-déj, plats, collations ; coût et macros calculés automatiquement |
+| **L4 – Moteur de menus** | Menu de la semaine : calories, protéines et budget visés, portions ajustées, variété, allergies |
+| **L5 – Comptes et suivi** | Profil sauvegardé, suivi du poids, recalcul automatique quand le poids change, partage avec le foyer |
+| **L6 – Liste de courses et achat** | Liste par rayon arrondie aux paquets, comparaison du panier entre enseignes, bouton « commander » |
+| **L7 – Monétisation** | Freemium + premium, partenariats (boucheries, primeurs, salles de sport, marques), affiliation |
+| **L8 – Croissance** | Darija et arabe, appli installable, ambassadeurs, alertes WhatsApp, pages pour Google |
 
 ---
 
 ## Les sprints
 
-### Sprint 0 (semaine 1) : Fondations ✅ en grande partie fait
+### Sprint 0 : Fondations + prototype ✅ en grande partie fait
 - [x] Analyse du concurrent Planivore
-- [x] Test de scraping Bringo et Glovo/Marjane
-- [x] Landing page Next.js avec la même structure de sections (hero, mécanisme, étapes, résultats, prix, recettes, aperçu de l'app, bêta, FAQ, footer)
-- [ ] Choisir et acheter le domaine (carnivore.ma ?) et déployer sur Vercel
-- [ ] **Liste d'attente branchée sur Supabase** (le bouton de la bêta ne fait encore rien)
-- [ ] Analytics (Vercel Analytics ou Plausible)
+- [x] Tests de scraping : Bringo (7 rayons) et Glovo/Marjane
+- [x] Landing page avec la même structure de sections que Planivore
+- [x] **Calculateur en direct** : IMC, métabolisme de base, dépense, calories visées, macros
+- [x] **8 régimes** : équilibré, méditerranéen, riche en protéines, végétarien, végan, pauvre en glucides, cétogène, carnivore, avec les options sans gluten et sans lactose
+- [x] **Moteur de menu** sur 7 jours (portions ajustées, collations si besoin, variété) et **liste de courses** arrondie aux paquets, au prix réel
+- [x] 36 recettes et 32 produits au prix réel
+- [ ] Choisir le nom et le domaine, déployer sur Vercel
+- [ ] Liste d'attente branchée sur Supabase
+- [ ] Analytics
 
-**Fin de sprint** : site en ligne qui collecte des e-mails.
+### Sprint 1 : Données de prix automatisées (L1)
+- Schéma Supabase : `stores`, `products`, `prices` (daté), `categories`, `nutrition`
+- Scraper quotidien Bringo sur tous les rayons alimentaires (3 magasins)
+- Normalisation des prix au kg, filtre des ruptures (prix à 0), alertes en cas d'échec
+- Le site lit les prix depuis la base
 
-### Sprint 1 (semaines 2-3) : Données de prix (L1)
-- Schéma Supabase : `stores`, `products`, `prices` (historique daté), `categories`
-- Scraper Bringo : 3 magasins × Boucherie, Volaille, Poissonnerie, Œufs et crémerie, Charcuterie
-- Normalisation : prix/kg, tri des « 500 g » et « au kg », filtre des prix à 0 (ruptures)
-- Exécution quotidienne planifiée + alerte en cas d'échec
-- La landing page lit les prix depuis la base au lieu du fichier statique
+**Fin de sprint** : plus de 1 000 produits à jour chaque jour.
 
-**Fin de sprint** : plus de 300 produits mis à jour chaque jour.
+### Sprint 2 : Nutrition des produits + Marjane (L1, L2)
+- Rattacher chaque produit à une fiche nutritionnelle (table de référence CIQUAL ou Open Food Facts quand le code-barres existe)
+- Scraper Marjane (Glovo) par ville, et faire correspondre les produits entre enseignes
+- Page publique « Prix des courses au Maroc cette semaine », pour Google
 
-### Sprint 2 (semaines 4-5) : Marjane + page « Prix de la viande » (L1, L5)
-- Découverte des pages Glovo/Marjane par ville, puis scraper
-- Correspondance des produits entre enseignes (« entrecôte de bœuf » = même produit)
-- Page publique `/prix-viande-maroc`, optimisée pour Google, mise à jour chaque jour, avec un graphique d'évolution des prix
-- Publications Instagram/TikTok générées à partir de ces données (« la viande la moins chère cette semaine »)
+### Sprint 3 : Recettes à grande échelle (L3)
+- Éditeur de recettes (back-office) : ingrédients reliés aux produits, étapes, photos
+- 150 recettes : marocaines (tagines, couscous, harira, bissara, zaalouk…), healthy, sportives, végétales, céto
+- Pages recettes publiques avec macros et prix
 
-**Fin de sprint** : 2 enseignes comparées, première source de trafic gratuit.
+### Sprint 4 : Comptes et suivi (L5)
+- Connexion par e-mail sans mot de passe + Google
+- Profil sauvegardé, **suivi du poids** (courbe), recalcul automatique des besoins
+- Préférences : aliments exclus, matériel, temps de cuisine
 
-### Sprint 3 (semaines 6-7) : Recettes (L2)
-- Modèle de données des recettes (ingrédients reliés aux produits, quantités, étapes, temps, tags)
-- Les 60 premières recettes carnivores marocaines : kefta, tagines, mechoui, abats, poulet, poisson, œufs
-- Coût par personne recalculé automatiquement avec les prix du jour
-- Pages recettes publiques, pour le référencement
+### Sprint 5 : Moteur v2 + bêta privée (L4, L6)
+- Remplacer un plat en un clic, verrouiller un plat, cuisiner en double pour les restes
+- Menus différents par membre du foyer (objectifs différents), avec une liste commune
+- Bouton « Commander sur Bringo / Glovo »
+- **Bêta privée** ouverte aux inscrits de la liste d'attente, retours dans l'app
 
-**Fin de sprint** : catalogue de recettes chiffrées en ligne.
+### Sprint 6 : Monétisation (L7)
+- Gratuit : calculateur + 1 menu par semaine. Premium (29 / 39 / 49 MAD par mois, à tester) : menus illimités, suivi du poids, foyer, alertes
+- Paiement CMI ou Stripe, ou Paddle/WHOP
+- Partenaires : boucheries, primeurs, salles de sport (code promo traçable, commission)
 
-### Sprint 4 (semaines 8-9) : Comptes et menu (L3, L4)
-- Connexion (e-mail sans mot de passe + Google)
-- Questionnaire du profil foyer en 2 minutes
-- Générateur de menu de la semaine dans le budget, avec remplacement d'un plat en un clic
+### Sprint 7 : Comparateur de panier + alertes (L6)
+- « Ta liste coûte X chez Carrefour et Y chez Marjane »
+- Alertes promo sur tes produits habituels
+- Indicateurs « protéines par dirham » et « calories par dirham »
 
-**Fin de sprint** : un utilisateur reçoit son menu personnalisé et chiffré.
+### Sprint 8 : Croissance (L8)
+- Interface en darija et en arabe
+- Appli installable avec notifications, rappels WhatsApp
+- Programme ambassadeurs (coachs, influenceurs fitness et nutrition)
+- Catalogues BIM et Aswak (lecture des catalogues PDF)
 
-### Sprint 5 (semaines 10-11) : Liste de courses + bêta privée (L4)
-- Liste fusionnée et triée par rayon, cases à cocher, partage avec 4 proches
-- Bouton « Commander sur Bringo / Glovo » (lien direct, suivi des clics)
-- **Ouverture de la bêta privée** aux inscrits de la liste d'attente
-- Collecte de retours dans l'app
-
-**Fin de sprint** : bêta avec 100 à 300 utilisateurs réels, et de vrais témoignages à mettre sur la landing page.
-
-### Sprint 6 (semaines 12-13) : Monétisation (L6)
-- Offre gratuite limitée + abonnement mensuel (prix à tester : 29 / 39 / 49 MAD) + accès à vie en lancement
-- Paiement : CMI ou Stripe (selon la faisabilité), Paddle/WHOP en alternative
-- Premières boucheries partenaires (Casablanca) : fiche partenaire, code promo traçable, commission
-
-**Fin de sprint** : premiers dirhams encaissés.
-
-### Sprint 7 (semaines 14-15) : Alertes et comparateur de panier (L5)
-- « Ton panier de la semaine coûte X chez Carrefour et Y chez Marjane »
-- Alertes promo sur les morceaux favoris (e-mail, puis WhatsApp)
-- Indicateur « protéines par dirham » (MAD par 10 g de protéines)
-
-### Sprint 8 (semaines 16-17) : Croissance (L7)
-- Interface en darija et en arabe (traduction de la page)
-- Application installable (PWA) avec notifications
-- Programme ambassadeurs : codes influenceurs, tableau de bord des commissions
-- Catalogues BIM et Aswak (lecture des catalogues promo PDF)
-
-**Lancement public** à la fin du sprint 8, vers la semaine 17.
+**Lancement public** vers la semaine 17.
 
 ---
 
-## Indicateurs à suivre
+## Indicateurs
 | Étape | Indicateur | Cible |
 |---|---|---|
-| Sprint 0-2 | Inscrits sur la liste d'attente | 500 |
-| Sprint 2+ | Visites de la page « Prix de la viande » | 5 000 / mois |
-| Sprint 5 | Utilisateurs actifs de la bêta | 150 / semaine |
+| Sprint 0-2 | Inscrits sur la liste d'attente | 1 000 |
+| Sprint 2+ | Calculs lancés par semaine | 2 000 |
+| Sprint 5 | Utilisateurs actifs de la bêta | 300 / semaine |
 | Sprint 6+ | Conversion gratuit → payant | 3 à 5 % |
-| Sprint 6+ | Clics vers l'achat / partenaires | 20 % des listes générées |
+| Sprint 6+ | Clics vers l'achat / partenaires | 20 % des listes |
 
 ## Risques
-- **Changement de structure des sites scrapés** : surveillance quotidienne et tests sur les scrapers.
-- **Juridique** : ne garder que nom, poids et prix ; relire les CGU de Bringo et Glovo ; viser des flux officiels via partenariats.
-- **Santé** : afficher un avertissement « pas un avis médical ».
-- **Faible volonté de payer** : miser sur les revenus partenaires et un abonnement à prix bas.
+- **Santé** : afficher « pas un avis médical », ne jamais descendre sous 1 200 kcal (femme) ou 1 500 kcal (homme), pas de perte de poids proposée si l'IMC est bas, avertissement pour les mineurs. À terme, faire valider le moteur par un diététicien (c'est aussi un argument marketing).
+- **Données de prix** : sites qui changent de structure → surveillance quotidienne ; ne garder que nom, poids et prix ; viser des partenariats.
+- **Valeurs nutritionnelles** : aujourd'hui des moyennes de référence ; passer à des données par produit (Open Food Facts) au Sprint 2.
+- **Faible volonté de payer** : calculateur gratuit pour l'acquisition, revenus des partenaires en complément du premium.
