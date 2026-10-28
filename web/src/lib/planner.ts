@@ -101,7 +101,7 @@ export function buildWeek(p: Profile, t: Targets, pool: Recipe[] = recipes): Wee
 
   // Toutes les journées possibles (petit-déj + déjeuner + dîner + 0 à 2 collations), mises à l'échelle
   // des calories visées. On ne garde que des indices pour rester rapide.
-  type Candidate = { b: number; l: number; d: number; s: number; scale: number; score: number };
+  type Candidate = { b: number; l: number; d: number; s: number; scale: number; score: number; kcalGap: number };
   const candidates: Candidate[] = [];
   for (let b = 0; b < nb.length; b++) {
     for (let l = 0; l < nm.length; l++) {
@@ -110,12 +110,13 @@ export function buildWeek(p: Profile, t: Targets, pool: Recipe[] = recipes): Wee
         for (let s = 0; s < ns.length; s++) {
           const base = add(meal, ns[s]);
           const scale = clampScale(t.kcal, base.kcal);
+          const kcalGap = Math.abs(base.kcal * scale - t.kcal) / t.kcal;
           const score =
             scoreDay(scaleNutrition(base, scale), t, w) +
             // Légère préférence pour les journées avec moins de collations et des portions raisonnables.
             snackSets[s].length * 0.02 +
             Math.max(0, scale - COMFORT_SCALE) * 0.15;
-          candidates.push({ b, l, d, s, scale, score });
+          candidates.push({ b, l, d, s, scale, score, kcalGap });
         }
       }
     }
@@ -124,20 +125,21 @@ export function buildWeek(p: Profile, t: Targets, pool: Recipe[] = recipes): Wee
   candidates.sort((x, y) => x.score - y.score || x.b - y.b || x.l - y.l || x.d - y.d || x.s - y.s);
 
   // 7 journées variées : un plat au plus 2 fois, un petit-déj ou une collation au plus 3 fois, si possible.
+  // Une journée qui manque sa cible calorique de plus de 3 % n'est retenue qu'en dernier recours.
   const chosen: Candidate[] = [];
   const picked = new Set<Candidate>();
   const usedMain = new Map<number, number>();
   const usedBreakfast = new Map<number, number>();
   const usedSnack = new Map<string, number>();
   const caps = [
-    { main: 2, other: 3 },
-    { main: 3, other: 4 },
-    { main: 7, other: 7 },
+    { main: 2, other: 3, maxGap: 0.03 },
+    { main: 3, other: 4, maxGap: 0.03 },
+    { main: 7, other: 7, maxGap: Infinity },
   ];
   for (const cap of caps) {
     for (const c of candidates) {
       if (chosen.length === 7) break;
-      if (picked.has(c)) continue;
+      if (picked.has(c) || c.kcalGap > cap.maxGap) continue;
       const snackIds = snackSets[c.s].map((r) => r.id);
       if ((usedMain.get(c.l) ?? 0) >= cap.main || (usedMain.get(c.d) ?? 0) >= cap.main) continue;
       if ((usedBreakfast.get(c.b) ?? 0) >= cap.other) continue;

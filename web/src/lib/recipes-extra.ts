@@ -2,9 +2,8 @@ import type { Recipe } from "./recipes";
 
 // Recettes supplémentaires pour couvrir chaque régime (végan, carnivore et cétogène surtout).
 // Quantités en grammes crus par personne ; uniquement des produits présents dans foods.ts.
-type ExtraRecipe = Recipe & { steps: string[] };
 
-export const extraRecipes: ExtraRecipe[] = [
+export const extraRecipes: Recipe[] = [
   // Petits-déjeuners
   {
     id: "oeufs-brouilles-beurre",

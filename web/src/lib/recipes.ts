@@ -1,4 +1,5 @@
 import { foodById } from "./foods";
+import { extraRecipes } from "./recipes-extra";
 
 export type MealType = "petit-dej" | "plat" | "collation";
 
@@ -15,7 +16,7 @@ export type Recipe = {
   steps: string[];
 };
 
-export const recipes: Recipe[] = [
+const baseRecipes: Recipe[] = [
   // Petits-déjeuners
   { id: "omelette", name: "Omelette au beurre", meal: "petit-dej", minutes: 10, ingredients: [{ id: "oeuf", grams: 180 }, { id: "beurre", grams: 10 }], steps: ["Casse les œufs dans un bol, sale, poivre et bats-les à la fourchette.", "Fais fondre le beurre dans une poêle à feu moyen.", "Verse les œufs et laisse prendre 2 à 3 minutes en ramenant les bords vers le centre.", "Plie l'omelette en deux et sers aussitôt."] },
   { id: "omelette-fromage", name: "Omelette au gruyère", meal: "petit-dej", minutes: 10, ingredients: [{ id: "oeuf", grams: 120 }, { id: "gruyere", grams: 30 }, { id: "beurre", grams: 5 }], steps: ["Râpe ou coupe le gruyère en petits dés.", "Bats les œufs avec une pincée de sel et de poivre.", "Fais fondre le beurre dans une poêle, verse les œufs et laisse prendre 2 minutes.", "Parsème le fromage, plie l'omelette et laisse fondre 1 minute avant de servir."] },
@@ -58,6 +59,8 @@ export const recipes: Recipe[] = [
   { id: "omelette-legumes", name: "Omelette aux légumes", meal: "plat", minutes: 15, ingredients: [{ id: "oeuf", grams: 180 }, { id: "courgette", grams: 100 }, { id: "tomate", grams: 80 }], steps: ["Coupe les courgettes et les tomates en petits dés.", "Fais revenir les courgettes 5 minutes dans un filet d'huile, puis ajoute les tomates 2 minutes.", "Bats les œufs avec sel, poivre et une pincée de cumin, et verse-les sur les légumes.", "Laisse prendre à feu doux 5 minutes, couvert, puis sers."] },
   { id: "couscous-legumes", name: "Couscous aux 7 légumes", meal: "plat", minutes: 75, ingredients: [{ id: "couscous", grams: 100 }, { id: "pois-chiche", grams: 50 }, { id: "courgette", grams: 120 }, { id: "carotte", grams: 100 }, { id: "navet", grams: 80 }], steps: ["Fais tremper les pois chiches une nuit.", "Fais revenir un oignon dans un filet d'huile avec du gingembre, du curcuma, du sel et du poivre, puis ajoute les pois chiches et couvre d'eau.", "Après 20 minutes, ajoute les carottes et les navets et laisse cuire 20 minutes.", "Ajoute les courgettes et poursuis 15 minutes.", "Pendant ce temps, prépare et cuis le couscous à la vapeur, puis dresse-le avec les légumes et le bouillon."] },
 ];
+
+export const recipes: Recipe[] = [...baseRecipes, ...extraRecipes];
 
 export type Nutrition = { kcal: number; protein: number; carbs: number; fat: number; cost: number };
 
