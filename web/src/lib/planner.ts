@@ -27,80 +27,136 @@ export type ShoppingItem = {
 
 const MIN_SCALE = 0.6;
 const MAX_SCALE = 2;
+// Au-delà de ce facteur, on préfère ajouter une collation plutôt que grossir les portions.
+const COMFORT_SCALE = 1.4;
+
+// Présélection : nombre de recettes gardées par type de repas avant de combiner.
+const K_BREAKFAST = 8;
+const K_MAIN = 20;
+const K_SNACK = 8;
+
+// Part des calories de la journée attendue pour chaque type de repas.
+const SHARE = { "petit-dej": 0.25, plat: 0.35, collation: 0.12 } as const;
+
+type Weights = { protein: number };
 
 function add(a: Nutrition, b: Nutrition): Nutrition {
   return { kcal: a.kcal + b.kcal, protein: a.protein + b.protein, carbs: a.carbs + b.carbs, fat: a.fat + b.fat, cost: a.cost + b.cost };
 }
 
-function scoreDay(n: Nutrition, t: Targets) {
+function scaleNutrition(n: Nutrition, s: number): Nutrition {
+  return { kcal: n.kcal * s, protein: n.protein * s, carbs: n.carbs * s, fat: n.fat * s, cost: n.cost * s };
+}
+
+function clampScale(targetKcal: number, kcal: number) {
+  return Math.min(MAX_SCALE, Math.max(MIN_SCALE, targetKcal / kcal));
+}
+
+function weightsFor(p: Profile): Weights {
+  // Protéines prioritaires pour le régime riche en protéines et quand on perd ou prend du poids.
+  return { protein: p.diet === "proteine" || p.goal !== "maintenir" ? 3 : 1.5 };
+}
+
+function scoreDay(n: Nutrition, t: Targets, w: Weights) {
   const kcalGap = Math.abs(n.kcal - t.kcal) / t.kcal;
   const proteinGap = Math.max(0, t.protein - n.protein) / t.protein;
   const carbGap = Math.max(0, n.carbs - t.carbs) / Math.max(t.carbs, 30);
   // Pour les régimes non plafonnés, on évite aussi une journée trop pauvre en glucides.
   const lowCarbGap = Math.max(0, t.carbs * 0.6 - n.carbs) / Math.max(t.carbs, 30);
   const budgetGap = Math.max(0, n.cost - t.dailyBudgetPerPerson) / t.dailyBudgetPerPerson;
-  return kcalGap * 2 + proteinGap * 1.5 + carbGap + lowCarbGap * 0.5 + budgetGap * 3;
+  return kcalGap * 2 + proteinGap * w.protein + carbGap + lowCarbGap * 0.5 + budgetGap * 3;
 }
 
-export function buildWeek(p: Profile, t: Targets): WeekPlan {
-  const allowed = recipes.filter((r) => recipeAllowed(r, p));
-  const breakfasts = allowed.filter((r) => r.meal === "petit-dej");
-  const mains = allowed.filter((r) => r.meal === "plat");
-  const empty: WeekPlan = { days: [], weekCostPerPerson: 0, shopping: [], shoppingTotal: 0 };
+// Garde les k recettes qui, seules et ramenées à leur part de calories, collent le mieux aux objectifs.
+function preselect(list: Recipe[], k: number, nutrition: Map<string, Nutrition>, t: Targets, w: Weights): Recipe[] {
+  if (list.length <= k) return list;
+  const scored = list.map((r) => {
+    const share = SHARE[r.meal];
+    const part: Targets = { ...t, kcal: t.kcal * share, protein: t.protein * share, carbs: t.carbs * share, dailyBudgetPerPerson: t.dailyBudgetPerPerson * share };
+    const n = nutrition.get(r.id)!;
+    return { r, score: scoreDay(scaleNutrition(n, clampScale(part.kcal, n.kcal)), part, w) };
+  });
+  scored.sort((a, b) => a.score - b.score || a.r.id.localeCompare(b.r.id));
+  return scored.slice(0, k).map((s) => s.r);
+}
 
-  if (breakfasts.length === 0 || mains.length < 2) {
+export function buildWeek(p: Profile, t: Targets, pool: Recipe[] = recipes): WeekPlan {
+  const allowed = pool.filter((r) => recipeAllowed(r, p));
+  const empty: WeekPlan = { days: [], weekCostPerPerson: 0, shopping: [], shoppingTotal: 0 };
+  if (allowed.filter((r) => r.meal === "petit-dej").length === 0 || allowed.filter((r) => r.meal === "plat").length < 2) {
     return { ...empty, error: "Pas encore assez de recettes pour cette combinaison de régime et d'allergies." };
   }
 
-  // Toutes les journées possibles (petit-déj + déjeuner + dîner, avec ou sans collation),
-  // mises à l'échelle des calories visées.
-  const singles = allowed.filter((r) => r.meal === "collation");
-  const snackSets: Recipe[][] = [[], ...singles.map((r) => [r]), ...singles.flatMap((a, i) => singles.slice(i + 1).map((b) => [a, b]))];
+  const w = weightsFor(p);
   const nutrition = new Map(allowed.map((r) => [r.id, recipeNutrition(r)]));
-  const candidates: { day: DayPlan; score: number; key: string }[] = [];
-  for (const b of breakfasts) {
-    for (const l of mains) {
-      for (const d of mains) {
-        if (l.id >= d.id) continue;
-        for (const extra of snackSets) {
-          const meals = [b, l, d, ...extra];
-          const base = meals.map((r) => nutrition.get(r.id)!).reduce(add);
-          const scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, t.kcal / base.kcal));
-          const totals: Nutrition = {
-            kcal: base.kcal * scale,
-            protein: base.protein * scale,
-            carbs: base.carbs * scale,
-            fat: base.fat * scale,
-            cost: base.cost * scale,
-          };
-          candidates.push({
-            day: { meals: meals.map((recipe) => ({ recipe, scale })), totals },
-            // Légère préférence pour les journées avec moins de collations.
-            score: scoreDay(totals, t) + extra.length * 0.02,
-            key: meals.map((r) => r.id).join("|"),
-          });
+  const byId = (a: Recipe, b: Recipe) => a.id.localeCompare(b.id);
+  const breakfasts = preselect(allowed.filter((r) => r.meal === "petit-dej"), K_BREAKFAST, nutrition, t, w).sort(byId);
+  const mains = preselect(allowed.filter((r) => r.meal === "plat"), K_MAIN, nutrition, t, w).sort(byId);
+  const singles = preselect(allowed.filter((r) => r.meal === "collation"), K_SNACK, nutrition, t, w).sort(byId);
+  const snackSets: Recipe[][] = [[], ...singles.map((r) => [r]), ...singles.flatMap((a, i) => singles.slice(i + 1).map((b) => [a, b]))];
+
+  const nb = breakfasts.map((r) => nutrition.get(r.id)!);
+  const nm = mains.map((r) => nutrition.get(r.id)!);
+  const ns = snackSets.map((set) => set.map((r) => nutrition.get(r.id)!).reduce(add, { kcal: 0, protein: 0, carbs: 0, fat: 0, cost: 0 }));
+
+  // Toutes les journées possibles (petit-déj + déjeuner + dîner + 0 à 2 collations), mises à l'échelle
+  // des calories visées. On ne garde que des indices pour rester rapide.
+  type Candidate = { b: number; l: number; d: number; s: number; scale: number; score: number };
+  const candidates: Candidate[] = [];
+  for (let b = 0; b < nb.length; b++) {
+    for (let l = 0; l < nm.length; l++) {
+      for (let d = l + 1; d < nm.length; d++) {
+        const meal = add(add(nb[b], nm[l]), nm[d]);
+        for (let s = 0; s < ns.length; s++) {
+          const base = add(meal, ns[s]);
+          const scale = clampScale(t.kcal, base.kcal);
+          const score =
+            scoreDay(scaleNutrition(base, scale), t, w) +
+            // Légère préférence pour les journées avec moins de collations et des portions raisonnables.
+            snackSets[s].length * 0.02 +
+            Math.max(0, scale - COMFORT_SCALE) * 0.15;
+          candidates.push({ b, l, d, s, scale, score });
         }
       }
     }
   }
-  candidates.sort((a, b) => a.score - b.score);
+  // Tri déterministe : à score égal, ordre des indices (eux-mêmes triés par identifiant).
+  candidates.sort((x, y) => x.score - y.score || x.b - y.b || x.l - y.l || x.d - y.d || x.s - y.s);
 
-  // 7 journées variées : un plat au plus 2 fois dans la semaine, si possible.
-  const days: DayPlan[] = [];
-  const used = new Map<string, number>();
-  const picked = new Set<string>();
-  for (const maxUse of [2, 3, 7]) {
+  // 7 journées variées : un plat au plus 2 fois, un petit-déj ou une collation au plus 3 fois, si possible.
+  const chosen: Candidate[] = [];
+  const picked = new Set<Candidate>();
+  const usedMain = new Map<number, number>();
+  const usedBreakfast = new Map<number, number>();
+  const usedSnack = new Map<string, number>();
+  const caps = [
+    { main: 2, other: 3 },
+    { main: 3, other: 4 },
+    { main: 7, other: 7 },
+  ];
+  for (const cap of caps) {
     for (const c of candidates) {
-      if (days.length === 7) break;
-      if (picked.has(c.key)) continue;
-      const plats = c.day.meals.filter((m) => m.recipe.meal === "plat").map((m) => m.recipe.id);
-      if (plats.some((id) => (used.get(id) ?? 0) >= maxUse)) continue;
-      days.push(c.day);
-      picked.add(c.key);
-      plats.forEach((id) => used.set(id, (used.get(id) ?? 0) + 1));
+      if (chosen.length === 7) break;
+      if (picked.has(c)) continue;
+      const snackIds = snackSets[c.s].map((r) => r.id);
+      if ((usedMain.get(c.l) ?? 0) >= cap.main || (usedMain.get(c.d) ?? 0) >= cap.main) continue;
+      if ((usedBreakfast.get(c.b) ?? 0) >= cap.other) continue;
+      if (snackIds.some((id) => (usedSnack.get(id) ?? 0) >= cap.other)) continue;
+      chosen.push(c);
+      picked.add(c);
+      usedMain.set(c.l, (usedMain.get(c.l) ?? 0) + 1);
+      usedMain.set(c.d, (usedMain.get(c.d) ?? 0) + 1);
+      usedBreakfast.set(c.b, (usedBreakfast.get(c.b) ?? 0) + 1);
+      snackIds.forEach((id) => usedSnack.set(id, (usedSnack.get(id) ?? 0) + 1));
     }
   }
-  while (days.length < 7) days.push(candidates[days.length % candidates.length].day);
+  while (chosen.length < 7) chosen.push(candidates[chosen.length % candidates.length]);
+
+  const days: DayPlan[] = chosen.map((c) => {
+    const meals = [breakfasts[c.b], mains[c.l], mains[c.d], ...snackSets[c.s]];
+    const totals = scaleNutrition(meals.map((r) => nutrition.get(r.id)!).reduce(add), c.scale);
+    return { meals: meals.map((recipe) => ({ recipe, scale: c.scale })), totals };
+  });
 
   // Liste de courses du foyer pour la semaine.
   const grams = new Map<string, number>();
