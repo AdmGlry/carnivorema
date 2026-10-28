@@ -18,10 +18,10 @@ export default async function LegalPage({ params }: { params: Promise<{ slug: st
   if (!title) notFound();
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16">
+    <div className="mx-auto max-w-3xl px-4 py-16">
       <Link href="/" className="text-sm text-accent">← Retour</Link>
       <h1 className="mt-4 text-3xl font-bold">{title}</h1>
       <p className="mt-6 text-muted">Cette page sera publiée avant l&apos;ouverture de la bêta.</p>
-    </main>
+    </div>
   );
 }
