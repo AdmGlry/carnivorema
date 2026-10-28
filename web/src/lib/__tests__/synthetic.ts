@@ -27,6 +27,7 @@ export function syntheticRecipes(counts: Record<MealType, number>, seed = 42): R
         meal,
         minutes: 20,
         ingredients: [...ids].map((id) => ({ id, grams: 40 + Math.floor(rand() * 200) })),
+        steps: [],
       });
     }
   }

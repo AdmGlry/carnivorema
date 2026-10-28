@@ -59,6 +59,7 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
     recipeYield: "1 portion",
     totalTime: `PT${r.minutes}M`,
     recipeIngredient: lines.map((l) => `${round(l.grams)} g ${l.f.name.toLowerCase()}`),
+    recipeInstructions: r.steps.map((text) => ({ "@type": "HowToStep", text })),
     nutrition: {
       "@type": "NutritionInformation",
       servingSize: "1 portion",
@@ -134,6 +135,20 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
           </table>
         </div>
         <p className="mt-2 text-xs text-muted">Poids crus. Prix {PRICE_SOURCE} du {PRICE_DATE}, hors huile, sel et épices.</p>
+      </section>
+
+      <section aria-labelledby="preparation" className="mt-10">
+        <h2 id="preparation" className="text-2xl font-bold">Préparation</h2>
+        <ol className="mt-4 space-y-3">
+          {r.steps.map((step, i) => (
+            <li key={i} className="flex gap-3">
+              <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-bold text-on-accent">
+                {i + 1}
+              </span>
+              <span className="pt-0.5">{step}</span>
+            </li>
+          ))}
+        </ol>
       </section>
 
       <section aria-labelledby="nutrition" className="mt-10">
