@@ -15,5 +15,6 @@ insert into public.categories (slug, name, sort_order) values
   ('legume', 'Légumes', 6),
   ('fruit', 'Fruits', 7),
   ('feculent', 'Pâtes, riz & semoule', 8),
-  ('legumineuse', 'Légumineuses', 9)
+  ('legumineuse', 'Légumineuses', 9),
+  ('epicerie', 'Épicerie', 10)
 on conflict (slug) do nothing;
