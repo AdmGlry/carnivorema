@@ -1,4 +1,5 @@
 import Link from "next/link";
+import HeroScale from "@/components/HeroScale";
 import WaitlistForm from "@/components/WaitlistForm";
 import { BRAND } from "@/lib/config";
 import { PRICE_DATE, PRICE_SOURCE, categoryLabels, foods, mad, pricePerKg } from "@/lib/foods";
@@ -110,31 +111,41 @@ export default function Home() {
 
   return (
     <>
-        {/* Hero */}
-        <section className="mx-auto max-w-6xl px-4 pb-12 pt-16 text-center sm:pt-24">
-          <span className="rounded-full bg-accent-soft px-3 py-1 text-sm font-medium text-accent"><span aria-hidden="true">🇲🇦 </span>Pensé pour le Maroc</span>
-          <h1 className="mx-auto mt-6 max-w-4xl text-4xl font-extrabold leading-tight sm:text-6xl">
-            Mange selon ton corps, ton régime <span className="text-accent">et ton budget</span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted">
-            Perdre, maintenir ou prendre du poids : {BRAND} calcule tes besoins à partir de ton poids et de ta taille, compose ton menu de la
-            semaine selon ton régime et te donne la liste de courses au vrai prix de ton supermarché.
-          </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link href="/commencer" className="rounded-full bg-accent px-6 py-3 font-semibold text-on-accent hover:opacity-90">
-              Calculer mon menu gratuitement
-            </Link>
-            <a href="#regimes" className="rounded-full border border-border px-6 py-3 font-semibold">
-              Voir les 8 régimes
-            </a>
+        {/* Hero : la balance (mizan) en 3D */}
+        <section className="mx-auto grid max-w-6xl items-center gap-8 px-4 pb-12 pt-12 md:grid-cols-[1.1fr_1fr] md:pt-20">
+          <div className="text-center md:text-left">
+            <span className="rounded-full bg-accent-soft px-3 py-1 text-sm font-medium text-accent">
+              <span aria-hidden="true">🇲🇦 </span>Pensé pour le Maroc
+            </span>
+            <h1 className="mt-6 text-4xl font-extrabold leading-[1.05] sm:text-6xl">
+              Mange selon ton corps, ton régime <span className="text-accent">et ton budget</span>
+            </h1>
+            <p className="mx-auto mt-6 max-w-xl text-lg text-muted md:mx-0">
+              Perdre, maintenir ou prendre du poids : {BRAND} calcule tes besoins, compose ton menu de la semaine selon ton régime et te donne la liste
+              de courses au vrai prix de ton supermarché.
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-3 md:justify-start">
+              <Link href="/commencer" className="rounded-full bg-accent px-6 py-3 font-semibold text-on-accent transition-transform hover:-translate-y-0.5">
+                Calculer mon menu gratuitement
+              </Link>
+              <a href="#regimes" className="rounded-full border border-border px-6 py-3 font-semibold">
+                Voir les 8 régimes
+              </a>
+            </div>
           </div>
-          <p className="mt-10 text-sm text-muted">Les prix de tes enseignes, relevés pour de vrai</p>
+          <HeroScale />
+        </section>
+        <div className="mx-auto max-w-6xl px-4 pb-4 text-center">
+          <p className="text-sm text-muted">Les prix de tes enseignes, relevés pour de vrai</p>
           <ul className="mt-4 flex flex-wrap justify-center gap-2">
             {stores.map((s) => (
-              <li key={s.name} className="rounded-full border border-border bg-card px-4 py-1.5 text-sm">{s.name}</li>
+              <li key={s.name} className={`rounded-full border px-4 py-1.5 text-sm ${s.status === "Bientôt" ? "border-dashed border-border text-muted" : "border-accent bg-accent-soft font-medium text-accent"}`}>
+                {s.name}
+                {s.status === "Bientôt" ? " · bientôt" : " ✓"}
+              </li>
             ))}
           </ul>
-        </section>
+        </div>
 
         {/* Le mécanisme */}
         <Section id="features" kicker="Le mécanisme" title={<>Chaque repas a un prix <span className="text-accent">et des calories.</span></>}>

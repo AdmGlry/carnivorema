@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { mad } from "@/lib/foods";
 import { DietId, Goal, Profile, Sex, activityLevels, bmiLabel, computeTargets, diets, goals } from "@/lib/nutrition";
 import { buildWeek } from "@/lib/planner";
 import PlanResults from "./PlanResults";
+import Scale3D from "./Scale3D";
+import { Confetti, tiltHandlers } from "./fun";
 
 const STORAGE_KEY = "mizan-profil-v1";
 
@@ -79,7 +81,8 @@ function Choice({
       onClick={onClick}
       disabled={disabled}
       aria-pressed={selected}
-      className={`group flex w-full items-start gap-3 rounded-2xl border-2 px-4 py-4 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+      {...tiltHandlers()}
+      className={`tilt-card group flex w-full items-start gap-3 rounded-2xl border-2 px-4 py-4 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${selected ? "pop " : ""}${
         selected ? "border-accent bg-accent-soft" : "border-border bg-card hover:border-accent/60"
       }`}
     >
@@ -182,6 +185,7 @@ export default function Onboarding() {
   const [step, setStep] = useState(0);
   const [editingFromResult, setEditingFromResult] = useState(false);
   const [restored, setRestored] = useState(false);
+  const [celebrate, setCelebrate] = useState(false);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -217,7 +221,10 @@ export default function Onboarding() {
     if (advanceTimer.current) clearTimeout(advanceTimer.current);
     setStep(Math.max(0, Math.min(STEPS.length, n)));
   };
-  const next = () => go(editingFromResult ? STEPS.length : step + 1);
+  const next = () => {
+    if (!editingFromResult && step === STEPS.length - 1) setCelebrate(true);
+    go(editingFromResult ? STEPS.length : step + 1);
+  };
   const pick = <K extends keyof Profile>(k: K, v: Profile[K]) => {
     set(k, v);
     if (advanceTimer.current) clearTimeout(advanceTimer.current);
@@ -254,6 +261,17 @@ export default function Onboarding() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step, p.sex, p.age, p.weightKg, p.heightCm, p.activity, p.goal, p.diet, p.glutenFree, p.lactoseFree, p.people]);
 
+  // La balance du budget : coût réel du menu au budget choisi, recalculé sans bloquer la saisie.
+  const deferredBudget = useDeferredValue(p.monthlyBudget);
+  const budgetCost = useMemo(() => {
+    if (STEPS[step]?.id !== "budget") return null;
+    const q = { ...p, monthlyBudget: deferredBudget };
+    const w = buildWeek(q, computeTargets(q));
+    return w.error ? null : (w.weekCostPerPerson / 7) * 30 * p.people;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, deferredBudget, p.sex, p.age, p.weightKg, p.heightCm, p.activity, p.goal, p.diet, p.glutenFree, p.lactoseFree, p.people]);
+  const budgetTilt = budgetCost === null ? 0 : Math.max(-1, Math.min(1, ((budgetCost - p.monthlyBudget) / Math.max(1, p.monthlyBudget)) * 3));
+
   if (!restored) return <div className="min-h-[60vh]" aria-busy="true" />;
 
   if (done) {
@@ -272,6 +290,7 @@ export default function Onboarding() {
     ];
     return (
       <div className="mx-auto max-w-5xl px-4 py-10 sm:py-14">
+        <Confetti fire={celebrate} />
         <p className="text-sm font-semibold uppercase tracking-wide text-accent">Ton plan</p>
         <h1 ref={headingRef} tabIndex={-1} className="font-display mt-2 text-4xl font-bold text-balance outline-none sm:text-5xl">
           Voici ta semaine
@@ -435,6 +454,24 @@ export default function Onboarding() {
 
           {current.id === "budget" && (
             <>
+              <Scale3D
+                tilt={budgetTilt}
+                className="mx-auto -mt-4 h-52 w-full max-w-sm sm:h-60"
+                label={
+                  budgetCost === null
+                    ? "Balance du budget"
+                    : budgetTilt > 0.05
+                      ? "La balance penche côté assiette : le budget ne couvre pas le menu"
+                      : "La balance est équilibrée : le budget couvre le menu"
+                }
+              />
+              {budgetCost !== null && (
+                <p className={`mb-6 text-center text-sm font-medium ${budgetTilt > 0.05 ? "text-accent" : "text-muted"}`} aria-live="polite">
+                  {budgetTilt > 0.05
+                    ? `Il manque environ ${Math.round((budgetCost - p.monthlyBudget) / 50) * 50} MAD : l'assiette pèse plus lourd.`
+                    : "Ton budget couvre le menu : la balance est à l'équilibre."}
+                </p>
+              )}
               <Measure id="ob-budget" label="ton budget mensuel" value={p.monthlyBudget} onChange={(n) => set("monthlyBudget", n)} min={300} max={15000} step={50} unit="MAD" />
               <div className="mx-auto mt-8 grid max-w-md gap-2 text-sm">
                 <p className="flex justify-between gap-3 border-b border-border pb-2">

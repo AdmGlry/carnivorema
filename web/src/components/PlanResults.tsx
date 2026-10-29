@@ -4,15 +4,18 @@ import { useMemo } from "react";
 import { PRICE_DATE, PRICE_SOURCE, categoryLabels, mad } from "@/lib/foods";
 import { Profile, computeTargets, goals } from "@/lib/nutrition";
 import { buildWeek } from "@/lib/planner";
+import { CountUp } from "./fun";
 
 const DAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 const MEALS = ["Petit-déj", "Déjeuner", "Dîner", "Collation", "Collation"];
 
-function Stat({ label, value, sub }: { label: string; value: string; sub?: string }) {
+function Stat({ label, value, format, sub }: { label: string; value: number; format: (v: number) => string; sub?: string }) {
   return (
     <div className="rounded-xl bg-background p-4">
       <p className="text-xs text-muted">{label}</p>
-      <p className="font-display mt-1 text-xl font-bold tabular-nums">{value}</p>
+      <p className="font-display mt-1 text-xl font-bold tabular-nums">
+        <CountUp value={value} format={format} />
+      </p>
       {sub && <p className="text-xs text-muted">{sub}</p>}
     </div>
   );
@@ -55,10 +58,10 @@ export default function PlanResults({ profile: p, onBudget }: { profile: Profile
       <div className="rounded-2xl border border-border bg-card p-6">
         <h3 className="font-display text-lg font-bold">Tes besoins par jour</h3>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Stat label="IMC" value={targets.bmi.toFixed(1)} sub={targets.bmiLabel} />
-          <Stat label="Dépense estimée" value={`${Math.round(targets.tdee)} kcal`} sub={`Métabolisme de base : ${Math.round(targets.bmr)}`} />
-          <Stat label="Objectif calories" value={`${Math.round(targets.kcal)} kcal`} sub={goals.find((g) => g.value === p.goal)!.label.split(" (")[0]} />
-          <Stat label="Budget / jour / pers" value={mad(targets.dailyBudgetPerPerson)} sub={`${p.monthlyBudget} MAD / mois`} />
+          <Stat label="IMC" value={targets.bmi} format={(v) => v.toFixed(1)} sub={targets.bmiLabel} />
+          <Stat label="Dépense estimée" value={targets.tdee} format={(v) => `${Math.round(v)} kcal`} sub={`Métabolisme de base : ${Math.round(targets.bmr)}`} />
+          <Stat label="Objectif calories" value={targets.kcal} format={(v) => `${Math.round(v)} kcal`} sub={goals.find((g) => g.value === p.goal)!.label.split(" (")[0]} />
+          <Stat label="Budget / jour / pers" value={targets.dailyBudgetPerPerson} format={mad} sub={`${p.monthlyBudget} MAD / mois`} />
         </div>
         <div className="mt-4 grid grid-cols-3 gap-3 text-center text-sm">
           {[
@@ -68,7 +71,9 @@ export default function PlanResults({ profile: p, onBudget }: { profile: Profile
           ].map(([label, g]) => (
             <div key={label} className="rounded-xl bg-accent-soft p-3">
               <p className="text-xs text-muted">{label}</p>
-              <p className="font-display text-lg font-bold text-accent tabular-nums">{Math.round(g as number)} g</p>
+              <p className="font-display text-lg font-bold text-accent tabular-nums">
+                <CountUp value={g as number} format={(v) => `${Math.round(v)} g`} />
+              </p>
             </div>
           ))}
         </div>
