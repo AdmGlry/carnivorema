@@ -36,12 +36,21 @@
 - [x] **Calculateur en direct** : IMC, métabolisme de base, dépense, calories visées, macros
 - [x] **8 régimes** : équilibré, méditerranéen, riche en protéines, végétarien, végan, pauvre en glucides, cétogène, carnivore, avec les options sans gluten et sans lactose
 - [x] **Moteur de menu** sur 7 jours (portions ajustées, collations si besoin, variété) et **liste de courses** arrondie aux paquets, au prix réel
-- [x] 36 recettes et 32 produits au prix réel
+- [x] 98 recettes (avec étapes) et 58 produits au prix réel
+- [x] Schéma Supabase (prix, produits, nutrition, liste d'attente, RLS) et formulaire de liste d'attente
+- [x] Pages publiques `/prix`, `/recettes`, `/regimes`, SEO (sitemap, JSON-LD), application installable
+- [x] 46 tests du moteur et des données (web) + 43 tests du scraper
+- [x] Étude business complète (`docs/business/`)
 - [ ] Choisir le nom et le domaine, déployer sur Vercel
-- [ ] Liste d'attente branchée sur Supabase
+- [ ] Créer le projet Supabase, appliquer les migrations, renseigner les variables (voir `docs/supabase.md`)
 - [ ] Analytics
 
-### Sprint 1 : Données de prix automatisées (L1)
+### Sprint 1 : Données de prix automatisées (L1) — en grande partie fait
+- [x] Scraper Bringo (`scraper/`) : collecte paginée, conditionnement et prix au kg, JSON/CSV, écriture Supabase
+- [x] Tâche planifiée quotidienne (`.github/workflows/scrape-prices.yml`)
+- [ ] Premier relevé réel dans GitHub Actions (le réseau de développement ne joint pas bringo.ma)
+- [ ] Ajouter Carrefour Market et Gourmet, faire lire les prix au site depuis la base
+
 - Schéma Supabase : `stores`, `products`, `prices` (daté), `categories`, `nutrition`
 - Scraper quotidien Bringo sur tous les rayons alimentaires (3 magasins)
 - Normalisation des prix au kg, filtre des ruptures (prix à 0), alertes en cas d'échec
