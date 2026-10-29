@@ -1,6 +1,6 @@
 -- Schéma initial : enseignes, rayons, produits, relevés de prix, nutrition, liste d'attente.
 
-create extension if not exists citext;
+create extension if not exists citext with schema extensions;
 
 -- Enseignes (un magasin en ligne = une ligne, ex. carrefour-hypermarket)
 create table public.stores (
