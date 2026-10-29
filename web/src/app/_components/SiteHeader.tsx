@@ -27,7 +27,7 @@ export default function SiteHeader() {
         </nav>
         <div className="flex items-center gap-3">
           <ThemeToggle />
-          <Link href="/#essayer" className="rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-on-accent">
+          <Link href="/commencer" className="rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-on-accent">
             Mon menu
           </Link>
         </div>

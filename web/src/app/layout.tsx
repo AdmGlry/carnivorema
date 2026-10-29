@@ -1,8 +1,13 @@
 import type { Metadata, Viewport } from "next";
+import { Bricolage_Grotesque, Figtree } from "next/font/google";
 import SiteFooter from "./_components/SiteFooter";
 import SiteHeader from "./_components/SiteHeader";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, THEME_DARK, THEME_LIGHT } from "./_site";
 import "./globals.css";
+
+// Titres et grands chiffres : une grotesque à caractère ; texte courant : une sans-serif lisible.
+const display = Bricolage_Grotesque({ subsets: ["latin"], variable: "--font-display-face", display: "swap" });
+const body = Figtree({ subsets: ["latin"], variable: "--font-body-face", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -56,7 +61,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" suppressHydrationWarning>
+    <html lang="fr" suppressHydrationWarning className={`${display.variable} ${body.variable}`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

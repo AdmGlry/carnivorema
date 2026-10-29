@@ -196,7 +196,7 @@ export default async function DietPage({ params }: { params: Promise<{ id: strin
       <div className="mt-8 rounded-2xl bg-card p-6 text-center">
         <h2 className="text-xl font-bold">Ton menu {d.name.toLowerCase()} de la semaine</h2>
         <p className="mt-2 text-muted">Avec tes calories, tes macros et ton budget, au prix réel.</p>
-        <Link href="/#essayer" className="mt-4 inline-block rounded-full bg-accent px-5 py-2.5 font-semibold text-on-accent">
+        <Link href="/commencer" className="mt-4 inline-block rounded-full bg-accent px-5 py-2.5 font-semibold text-on-accent">
           Calculer mon menu
         </Link>
       </div>

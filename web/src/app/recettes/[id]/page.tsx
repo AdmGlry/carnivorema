@@ -190,7 +190,7 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
       <div className="mt-12 rounded-2xl bg-accent-soft p-6">
         <h2 className="text-xl font-bold">Ajuste la portion à tes besoins</h2>
         <p className="mt-2 text-muted">Le calculateur adapte les quantités à ton poids, ta taille, ton objectif et ton budget.</p>
-        <Link href="/#essayer" className="mt-4 inline-block rounded-full bg-accent px-5 py-2.5 font-semibold text-on-accent">
+        <Link href="/commencer" className="mt-4 inline-block rounded-full bg-accent px-5 py-2.5 font-semibold text-on-accent">
           Calculer mon menu
         </Link>
       </div>

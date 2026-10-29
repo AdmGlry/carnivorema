@@ -68,7 +68,7 @@ export default function PricesPage() {
       <div className="mt-12 rounded-2xl bg-accent-soft p-6">
         <h2 className="text-xl font-bold">Transforme ces prix en menu</h2>
         <p className="mt-2 text-muted">Indique ton poids, ta taille, ton objectif et ton budget : on compose ta semaine avec ces produits.</p>
-        <Link href="/#essayer" className="mt-4 inline-block rounded-full bg-accent px-5 py-2.5 font-semibold text-on-accent">
+        <Link href="/commencer" className="mt-4 inline-block rounded-full bg-accent px-5 py-2.5 font-semibold text-on-accent">
           Calculer mon menu
         </Link>
       </div>

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Planner from "@/components/Planner";
 import WaitlistForm from "@/components/WaitlistForm";
 import { BRAND } from "@/lib/config";
 import { PRICE_DATE, PRICE_SOURCE, categoryLabels, foods, mad, pricePerKg } from "@/lib/foods";
@@ -122,9 +121,9 @@ export default function Home() {
             semaine selon ton régime et te donne la liste de courses au vrai prix de ton supermarché.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <a href="#essayer" className="rounded-full bg-accent px-6 py-3 font-semibold text-on-accent hover:opacity-90">
+            <Link href="/commencer" className="rounded-full bg-accent px-6 py-3 font-semibold text-on-accent hover:opacity-90">
               Calculer mon menu gratuitement
-            </a>
+            </Link>
             <a href="#regimes" className="rounded-full border border-border px-6 py-3 font-semibold">
               Voir les 8 régimes
             </a>
@@ -207,8 +206,43 @@ export default function Home() {
         </Section>
 
         {/* Calculateur */}
-        <Section id="essayer" kicker="Essaie maintenant" title="Ton menu personnalisé, en direct">
-          <Planner />
+        <Section id="essayer" kicker="Essaie maintenant" title="10 questions, une minute, ton menu.">
+          <div className="grid items-center gap-10 md:grid-cols-2">
+            <div>
+              <p className="text-lg text-muted">
+                Une question par écran : tu réponds, ça avance. À la fin, tes besoins, ton menu de la semaine et ta liste de courses au prix réel.
+              </p>
+              <ol className="mt-6 flex flex-wrap gap-2 text-sm">
+                {["Sexe", "Âge", "Poids", "Taille", "Activité", "Objectif", "Régime", "Allergies", "Foyer", "Budget"].map((q, i) => (
+                  <li key={q} className="rounded-full border border-border bg-card px-3 py-1.5">
+                    <span className="text-muted tabular-nums">{i + 1}.</span> {q}
+                  </li>
+                ))}
+              </ol>
+              <Link href="/commencer" className="mt-8 inline-block rounded-full bg-accent px-6 py-3 font-semibold text-on-accent hover:opacity-90">
+                Commencer
+              </Link>
+            </div>
+            <Link
+              href="/commencer"
+              aria-label="Commencer le questionnaire"
+              className="mx-auto block w-full max-w-sm rounded-[2rem] border border-border bg-card p-6 shadow-sm transition-transform hover:-translate-y-1"
+            >
+              <div className="flex items-center gap-3 text-sm text-muted">
+                <span>←</span>
+                <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-border">
+                  <span className="block h-full w-[10%] rounded-full bg-accent" />
+                </span>
+                <span className="tabular-nums">2/10</span>
+              </div>
+              <p className="font-display mt-8 text-3xl font-bold">Quel âge as-tu ?</p>
+              <p className="mt-2 text-sm text-muted">Les besoins en calories baissent un peu avec l&apos;âge.</p>
+              <p className="mt-10 text-center">
+                <span className="font-display text-7xl font-bold tabular-nums">30</span> <span className="text-lg text-muted">ans</span>
+              </p>
+              <span className="mt-10 block rounded-full bg-accent py-3 text-center font-semibold text-on-accent">Continuer</span>
+            </Link>
+          </div>
         </Section>
 
         {/* Régimes */}
