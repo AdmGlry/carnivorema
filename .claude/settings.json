@@ -2,11 +2,20 @@
   "permissions": {
     "allow": [
       "Bash",
+      "Read",
+      "Edit",
+      "Write",
+      "Glob",
+      "Grep",
       "WebFetch",
       "WebSearch",
+      "Agent",
+      "Skill",
+      "ToolSearch",
       "mcp__Context_dev",
       "mcp__github",
-      "mcp__Supabase"
+      "mcp__Supabase",
+      "mcp__claude-code-remote"
     ]
   }
 }
