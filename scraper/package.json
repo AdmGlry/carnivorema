@@ -5,6 +5,7 @@
   "type": "module",
   "description": "Relevé des prix des supermarchés marocains (Bringo / Carrefour Maroc)",
   "scripts": {
+    "scrape": "tsx src/main.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
