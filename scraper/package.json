@@ -1,0 +1,20 @@
+{
+  "name": "mizan-scraper",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Relevé des prix des supermarchés marocains (Bringo / Carrefour Maroc)",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "cheerio": "1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.2",
+    "tsx": "4.19.2",
+    "typescript": "5.7.2",
+    "vitest": "2.1.8"
+  }
+}
