@@ -11,6 +11,7 @@ export type Category =
   | "laitier"
   | "legume"
   | "fruit"
+  | "epicerie"
   | "feculent"
   | "legumineuse";
 
@@ -22,6 +23,7 @@ export const categoryLabels: Record<Category, string> = {
   laitier: "Crémerie",
   legume: "Légumes",
   fruit: "Fruits",
+  epicerie: "Épicerie",
   feculent: "Pâtes, riz & semoule",
   legumineuse: "Légumineuses",
 };
@@ -76,6 +78,34 @@ export const foods: Food[] = [
   { id: "haricot-blanc", name: "Haricots blancs", category: "legumineuse", priceMad: 10.95, packG: 500, packLabel: "500 g", kcal: 330, protein: 22, carbs: 45, fat: 1.5 },
   { id: "pois-chiche", name: "Pois chiches", category: "legumineuse", priceMad: 12.5, packG: 500, packLabel: "500 g", kcal: 360, protein: 19, carbs: 45, fat: 6 },
   { id: "feves", name: "Fèves cassées", category: "legumineuse", priceMad: 12.5, packG: 500, packLabel: "500 g", kcal: 340, protein: 26, carbs: 45, fat: 1.5 },
+
+  // Ajouts du 29/10/2026 (sources : data/produits-sources-2026-10-28.csv)
+  { id: "huile-olive", name: "Huile d'olive vierge extra", category: "epicerie", priceMad: 29.95, packG: 920, packLabel: "1 L", kcal: 900, protein: 0, carbs: 0, fat: 100 },
+  { id: "huile-table", name: "Huile de table", category: "epicerie", priceMad: 16.9, packG: 920, packLabel: "1 L", kcal: 900, protein: 0, carbs: 0, fat: 100 },
+  { id: "flocons-avoine", name: "Flocons d'avoine", category: "epicerie", priceMad: 15.75, packG: 500, packLabel: "500 g", kcal: 370, protein: 13.5, carbs: 58, fat: 7, gluten: true },
+  { id: "amandes", name: "Amandes", category: "epicerie", priceMad: 27.9, packG: 200, packLabel: "200 g", kcal: 600, protein: 21, carbs: 7, fat: 52 },
+  { id: "noix", name: "Noix décortiquées", category: "epicerie", priceMad: 32.9, packG: 200, packLabel: "200 g", kcal: 690, protein: 15, carbs: 7, fat: 65 },
+  { id: "dattes", name: "Dattes", category: "epicerie", priceMad: 28.9, packG: 1000, packLabel: "1 kg", kcal: 280, protein: 2.5, carbs: 66, fat: 0.4 },
+  { id: "miel", name: "Miel", category: "epicerie", priceMad: 29.95, packG: 250, packLabel: "250 g", kcal: 320, protein: 0.4, carbs: 80, fat: 0 },
+  { id: "beurre-cacahuete", name: "Beurre de cacahuète", category: "epicerie", priceMad: 28.75, packG: 400, packLabel: "400 g", kcal: 600, protein: 25, carbs: 12, fat: 50 },
+  { id: "quinoa", name: "Quinoa blanc", category: "feculent", priceMad: 39.25, packG: 400, packLabel: "400 g", kcal: 365, protein: 14, carbs: 57, fat: 6 },
+  { id: "pain-mie", name: "Pain de mie blanc", category: "feculent", priceMad: 13.95, packG: 420, packLabel: "420 g", kcal: 265, protein: 8.5, carbs: 47, fat: 4, gluten: true },
+  { id: "semoule", name: "Semoule fine (couscous fin)", category: "feculent", priceMad: 5.5, packG: 500, packLabel: "500 g", kcal: 360, protein: 12, carbs: 72, fat: 1.5, gluten: true },
+  { id: "thon", name: "Thon entier au naturel", category: "poisson", priceMad: 14.9, packG: 125, packLabel: "125 g", kcal: 110, protein: 25, carbs: 0, fat: 1 },
+  { id: "sardines-conserve", name: "Sardines à l'huile (conserve)", category: "poisson", priceMad: 6.95, packG: 125, packLabel: "125 g", kcal: 210, protein: 24, carbs: 0, fat: 13 },
+  { id: "raib", name: "Raïb nature", category: "laitier", priceMad: 17.5, packG: 900, packLabel: "900 g", kcal: 65, protein: 3.5, carbs: 5, fat: 3.2, lactose: true },
+  { id: "lben", name: "Lben", category: "laitier", priceMad: 10, packG: 900, packLabel: "900 g", kcal: 40, protein: 3, carbs: 4.5, fat: 1.5, lactose: true },
+  { id: "fromage-frais", name: "Fromage frais nature", category: "laitier", priceMad: 15.95, packG: 200, packLabel: "200 g", kcal: 250, protein: 6, carbs: 4, fat: 23, lactose: true },
+  { id: "lait", name: "Lait demi-écrémé", category: "laitier", priceMad: 12.95, packG: 1000, packLabel: "1 L", kcal: 46, protein: 3.3, carbs: 4.8, fat: 1.6, lactose: true },
+  { id: "patate-douce", name: "Patate douce", category: "legume", priceMad: 5.98, packG: 500, packLabel: "500 g", kcal: 86, protein: 1.6, carbs: 17, fat: 0.1 },
+  { id: "epinards", name: "Épinards", category: "legume", priceMad: 6.99, packG: 250, packLabel: "250 g", kcal: 23, protein: 2.9, carbs: 1.4, fat: 0.4 },
+  { id: "brocoli", name: "Brocoli", category: "legume", priceMad: 20.25, packG: 500, packLabel: "500 g", kcal: 34, protein: 2.8, carbs: 4, fat: 0.4 },
+  { id: "champignons", name: "Champignons de Paris", category: "legume", priceMad: 13.74, packG: 250, packLabel: "250 g", kcal: 22, protein: 3.1, carbs: 0.5, fat: 0.3 },
+  { id: "poivron", name: "Poivron rouge", category: "legume", priceMad: 5.38, packG: 250, packLabel: "250 g", kcal: 31, protein: 1, carbs: 4.5, fat: 0.3 },
+  { id: "pomme", name: "Pomme", category: "fruit", priceMad: 7.98, packG: 500, packLabel: "500 g", kcal: 52, protein: 0.3, carbs: 11.5, fat: 0.2 },
+  { id: "orange", name: "Orange", category: "fruit", priceMad: 4.75, packG: 500, packLabel: "500 g", kcal: 47, protein: 0.9, carbs: 9.5, fat: 0.1 },
+  { id: "escalope-dinde", name: "Escalope de dinde", category: "volaille", priceMad: 37.95, packG: 500, packLabel: "500 g", kcal: 105, protein: 23, carbs: 0, fat: 1.5 },
+  { id: "hache-dinde", name: "Viande hachée de dinde", category: "volaille", priceMad: 23.45, packG: 500, packLabel: "500 g", kcal: 150, protein: 19, carbs: 0, fat: 8 },
 ];
 
 export const foodById: Record<string, Food> = Object.fromEntries(foods.map((f) => [f.id, f]));
