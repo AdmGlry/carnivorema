@@ -11,6 +11,7 @@ export type Category =
   | "laitier"
   | "legume"
   | "fruit"
+  | "epicerie"
   | "feculent"
   | "legumineuse";
 
@@ -22,6 +23,7 @@ export const categoryLabels: Record<Category, string> = {
   laitier: "Crémerie",
   legume: "Légumes",
   fruit: "Fruits",
+  epicerie: "Épicerie",
   feculent: "Pâtes, riz & semoule",
   legumineuse: "Légumineuses",
 };
@@ -76,6 +78,16 @@ export const foods: Food[] = [
   { id: "haricot-blanc", name: "Haricots blancs", category: "legumineuse", priceMad: 10.95, packG: 500, packLabel: "500 g", kcal: 330, protein: 22, carbs: 45, fat: 1.5 },
   { id: "pois-chiche", name: "Pois chiches", category: "legumineuse", priceMad: 12.5, packG: 500, packLabel: "500 g", kcal: 360, protein: 19, carbs: 45, fat: 6 },
   { id: "feves", name: "Fèves cassées", category: "legumineuse", priceMad: 12.5, packG: 500, packLabel: "500 g", kcal: 340, protein: 26, carbs: 45, fat: 1.5 },
+
+  // Ajouts du 29/10/2026 (sources : data/produits-sources-2026-10-28.csv)
+  { id: "huile-olive", name: "Huile d'olive vierge extra", category: "epicerie", priceMad: 29.95, packG: 920, packLabel: "1 L", kcal: 900, protein: 0, carbs: 0, fat: 100 },
+  { id: "huile-table", name: "Huile de table", category: "epicerie", priceMad: 16.9, packG: 920, packLabel: "1 L", kcal: 900, protein: 0, carbs: 0, fat: 100 },
+  { id: "flocons-avoine", name: "Flocons d'avoine", category: "epicerie", priceMad: 15.75, packG: 500, packLabel: "500 g", kcal: 370, protein: 13.5, carbs: 58, fat: 7, gluten: true },
+  { id: "amandes", name: "Amandes", category: "epicerie", priceMad: 27.9, packG: 200, packLabel: "200 g", kcal: 600, protein: 21, carbs: 7, fat: 52 },
+  { id: "noix", name: "Noix décortiquées", category: "epicerie", priceMad: 32.9, packG: 200, packLabel: "200 g", kcal: 690, protein: 15, carbs: 7, fat: 65 },
+  { id: "dattes", name: "Dattes", category: "epicerie", priceMad: 28.9, packG: 1000, packLabel: "1 kg", kcal: 280, protein: 2.5, carbs: 66, fat: 0.4 },
+  { id: "miel", name: "Miel", category: "epicerie", priceMad: 29.95, packG: 250, packLabel: "250 g", kcal: 320, protein: 0.4, carbs: 80, fat: 0 },
+  { id: "beurre-cacahuete", name: "Beurre de cacahuète", category: "epicerie", priceMad: 28.75, packG: 400, packLabel: "400 g", kcal: 600, protein: 25, carbs: 12, fat: 50 },
 ];
 
 export const foodById: Record<string, Food> = Object.fromEntries(foods.map((f) => [f.id, f]));
