@@ -39,9 +39,8 @@ export function parseCategoryPage(html: string, ctx: { storeSlug: string; catego
     if (!name || !id) return;
 
     const priceBox = box.find(".bringo-product-price").first();
-    const uom = priceBox.find(".product-price-default-uom");
-    const uomText = uom.text();
-    uom.remove();
+    // Le prix indicatif « ~ 9,95 MAD / » est un bloc voisin du prix principal.
+    const uomText = box.find(".product-price-default-uom").first().text();
 
     let price = parsePrice(priceBox.text());
     let approximate = false;
