@@ -30,7 +30,7 @@ export const wholesale: WholesaleItem[] = [
   { slug: "courgette", name: "Courgette", kind: "legume", min: 4, max: 8, foodId: "courgette" },
   { slug: "aubergine", name: "Aubergine", kind: "legume", min: 3, max: 6, foodId: "aubergine" },
   { slug: "courge", name: "Courge", kind: "legume", min: 2, max: 5.5 },
-  { slug: "concombre", name: "Concombre", kind: "legume", min: 3, max: 6 },
+  { slug: "concombre", name: "Concombre", kind: "legume", min: 3, max: 6, foodId: "concombre" },
   { slug: "chou-fleur", name: "Chou-fleur", kind: "legume", min: 1.5, max: 3 },
   { slug: "chou-blanc", name: "Chou blanc", kind: "legume", min: 1.2, max: 2.3 },
   { slug: "orange", name: "Orange", kind: "fruit", min: 4, max: 6.5, foodId: "orange" },

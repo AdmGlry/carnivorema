@@ -106,6 +106,12 @@ export const foods: Food[] = [
   { id: "orange", name: "Orange", category: "fruit", priceMad: 4.75, packG: 500, packLabel: "500 g", kcal: 47, protein: 0.9, carbs: 9.5, fat: 0.1 },
   { id: "escalope-dinde", name: "Escalope de dinde", category: "volaille", priceMad: 37.95, packG: 500, packLabel: "500 g", kcal: 105, protein: 23, carbs: 0, fat: 1.5 },
   { id: "hache-dinde", name: "Viande hachée de dinde", category: "volaille", priceMad: 23.45, packG: 500, packLabel: "500 g", kcal: 150, protein: 19, carbs: 0, fat: 8 },
+
+  // Ajouts du 30/10/2026 (Bringo, rayon Légumes) pour les assiettes complètes
+  { id: "concombre", name: "Concombre", category: "legume", priceMad: 2.49, packG: 250, packLabel: "250 g", kcal: 15, protein: 0.7, carbs: 3, fat: 0.1 },
+  { id: "laitue", name: "Salade laitue", category: "legume", priceMad: 9.95, packG: 350, packLabel: "1 pièce", kcal: 15, protein: 1.3, carbs: 1.5, fat: 0.2 },
+  { id: "poivron-vert", name: "Poivron vert", category: "legume", priceMad: 3.88, packG: 250, packLabel: "250 g", kcal: 20, protein: 0.9, carbs: 3, fat: 0.2 },
+  { id: "chou-rouge", name: "Chou rouge", category: "legume", priceMad: 6.48, packG: 500, packLabel: "500 g", kcal: 31, protein: 1.4, carbs: 5, fat: 0.2 },
 ];
 
 export const foodById: Record<string, Food> = Object.fromEntries(foods.map((f) => [f.id, f]));

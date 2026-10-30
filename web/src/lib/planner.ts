@@ -1,5 +1,5 @@
 import { Category, categoryLabels, foodById } from "./foods";
-import { Profile, Targets, recipeAllowed } from "./nutrition";
+import { Profile, Targets, dietById, recipeAllowed } from "./nutrition";
 import { Nutrition, Recipe, recipeNutrition, recipes } from "./recipes";
 import { soukPricePerKg } from "./souk";
 
@@ -43,6 +43,21 @@ const SHARE = { "petit-dej": 0.25, plat: 0.35, collation: 0.12 } as const;
 
 type Weights = { protein: number };
 
+// Féculents : ils comptent pour l'assiette complète, pas comme légumes.
+const STARCHES = new Set(["riz", "couscous", "spaghetti", "quinoa", "semoule", "pain-mie", "pdt", "patate-douce", "flocons-avoine"]);
+
+// Pénalité d'une recette : on préfère les assiettes complètes (légumes + féculent ou légumineuses)
+// et les recettes rapides, sans exclure les plats mijotés.
+function recipePenalty(r: Recipe, p: Profile) {
+  let pen = (Math.max(0, r.minutes - 30) / 90) * 0.2;
+  if (r.meal !== "plat" || p.diet === "carnivore") return pen;
+  const veg = r.ingredients.reduce((g, i) => (foodById[i.id].category === "legume" && !STARCHES.has(i.id) ? g + i.grams : g), 0);
+  if (veg < 100) pen += veg < 50 ? 0.3 : 0.15;
+  const base = r.ingredients.some((i) => STARCHES.has(i.id) || foodById[i.id].category === "legumineuse");
+  if (!base && dietById[p.diet].maxCarbs === undefined) pen += 0.15;
+  return pen;
+}
+
 function add(a: Nutrition, b: Nutrition): Nutrition {
   return { kcal: a.kcal + b.kcal, protein: a.protein + b.protein, carbs: a.carbs + b.carbs, fat: a.fat + b.fat, cost: a.cost + b.cost };
 }
@@ -71,13 +86,13 @@ function scoreDay(n: Nutrition, t: Targets, w: Weights) {
 }
 
 // Garde les k recettes qui, seules et ramenées à leur part de calories, collent le mieux aux objectifs.
-function preselect(list: Recipe[], k: number, nutrition: Map<string, Nutrition>, t: Targets, w: Weights): Recipe[] {
+function preselect(list: Recipe[], k: number, nutrition: Map<string, Nutrition>, t: Targets, w: Weights, penalty: (r: Recipe) => number): Recipe[] {
   if (list.length <= k) return list;
   const scored = list.map((r) => {
     const share = SHARE[r.meal];
     const part: Targets = { ...t, kcal: t.kcal * share, protein: t.protein * share, carbs: t.carbs * share, dailyBudgetPerPerson: t.dailyBudgetPerPerson * share };
     const n = nutrition.get(r.id)!;
-    return { r, score: scoreDay(scaleNutrition(n, clampScale(part.kcal, n.kcal)), part, w) };
+    return { r, score: scoreDay(scaleNutrition(n, clampScale(part.kcal, n.kcal)), part, w) + penalty(r) };
   });
   scored.sort((a, b) => a.score - b.score || a.r.id.localeCompare(b.r.id));
   return scored.slice(0, k).map((s) => s.r);
@@ -93,13 +108,17 @@ export function buildWeek(p: Profile, t: Targets, pool: Recipe[] = recipes): Wee
   const w = weightsFor(p);
   const nutrition = new Map(allowed.map((r) => [r.id, recipeNutrition(r, 1, p.produce)]));
   const byId = (a: Recipe, b: Recipe) => a.id.localeCompare(b.id);
-  const breakfasts = preselect(allowed.filter((r) => r.meal === "petit-dej"), K_BREAKFAST, nutrition, t, w).sort(byId);
-  const mains = preselect(allowed.filter((r) => r.meal === "plat"), K_MAIN, nutrition, t, w).sort(byId);
-  const singles = preselect(allowed.filter((r) => r.meal === "collation"), K_SNACK, nutrition, t, w).sort(byId);
+  const penalty = (r: Recipe) => recipePenalty(r, p);
+  const breakfasts = preselect(allowed.filter((r) => r.meal === "petit-dej"), K_BREAKFAST, nutrition, t, w, penalty).sort(byId);
+  const mains = preselect(allowed.filter((r) => r.meal === "plat"), K_MAIN, nutrition, t, w, penalty).sort(byId);
+  const singles = preselect(allowed.filter((r) => r.meal === "collation"), K_SNACK, nutrition, t, w, penalty).sort(byId);
   const snackSets: Recipe[][] = [[], ...singles.map((r) => [r]), ...singles.flatMap((a, i) => singles.slice(i + 1).map((b) => [a, b]))];
 
   const nb = breakfasts.map((r) => nutrition.get(r.id)!);
   const nm = mains.map((r) => nutrition.get(r.id)!);
+  const pb = breakfasts.map(penalty);
+  const pm = mains.map(penalty);
+  const ps = snackSets.map((set) => set.reduce((x, r) => x + penalty(r), 0));
   const ns = snackSets.map((set) => set.map((r) => nutrition.get(r.id)!).reduce(add, { kcal: 0, protein: 0, carbs: 0, fat: 0, cost: 0 }));
 
   // Toutes les journées possibles (petit-déj + déjeuner + dîner + 0 à 2 collations), mises à l'échelle
@@ -118,7 +137,9 @@ export function buildWeek(p: Profile, t: Targets, pool: Recipe[] = recipes): Wee
             scoreDay(scaleNutrition(base, scale), t, w) +
             // Légère préférence pour les journées avec moins de collations et des portions raisonnables.
             snackSets[s].length * 0.02 +
-            Math.max(0, scale - COMFORT_SCALE) * 0.15;
+            Math.max(0, scale - COMFORT_SCALE) * 0.15 +
+            // Assiettes complètes et recettes rapides.
+            (pb[b] + pm[l] + pm[d] + ps[s]) * 0.5;
           candidates.push({ b, l, d, s, scale, score, kcalGap });
         }
       }
