@@ -101,7 +101,14 @@ export type Profile = {
   monthlyBudget: number;
   // Où sont achetés les fruits et légumes (supermarché par défaut).
   produce?: ProduceSource;
+  // Cuisine complète par défaut ; « etudiant » : peu de temps, peu de matériel, petit budget.
+  kitchen?: Kitchen;
 };
+
+export type Kitchen = "complete" | "etudiant";
+
+// Mode étudiant : plats rapides et sans four.
+export const STUDENT_MAX_MINUTES = 20;
 
 export type Targets = {
   bmi: number;

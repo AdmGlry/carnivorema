@@ -1,5 +1,5 @@
 import { Category, categoryLabels, foodById } from "./foods";
-import { Profile, Targets, dietById, recipeAllowed } from "./nutrition";
+import { Profile, STUDENT_MAX_MINUTES, Targets, dietById, recipeAllowed } from "./nutrition";
 import { Nutrition, Recipe, recipeNutrition, recipes } from "./recipes";
 import { soukPricePerKg } from "./souk";
 
@@ -46,10 +46,27 @@ type Weights = { protein: number };
 // Féculents : ils comptent pour l'assiette complète, pas comme légumes.
 const STARCHES = new Set(["riz", "couscous", "spaghetti", "quinoa", "semoule", "pain-mie", "pdt", "patate-douce", "flocons-avoine"]);
 
+// La recette demande-t-elle un four ? Sans champ equipment, on le devine à partir des étapes
+// (« au four », « Préchauffe »… mais pas « fourchette »).
+export function needsOven(r: Recipe) {
+  if (r.equipment) return r.equipment.includes("four");
+  return r.steps.some((s) => /\bfours?\b|préchauff/i.test(s));
+}
+
+// Mode étudiant : forte pénalité au-delà de 20 min ou avec un four, petit bonus aux recettes étiquetées.
+function studentPenalty(r: Recipe) {
+  let pen = 0;
+  if (r.minutes > STUDENT_MAX_MINUTES) pen += 1 + (r.minutes - STUDENT_MAX_MINUTES) / 30;
+  if (needsOven(r)) pen += 1.5;
+  if (!r.tags?.includes("etudiant")) pen += 0.05;
+  return pen;
+}
+
 // Pénalité d'une recette : on préfère les assiettes complètes (légumes + féculent ou légumineuses)
 // et les recettes rapides, sans exclure les plats mijotés.
 function recipePenalty(r: Recipe, p: Profile) {
   let pen = (Math.max(0, r.minutes - 30) / 60) * 0.3;
+  if (p.kitchen === "etudiant") pen += studentPenalty(r);
   if (r.meal !== "plat" || p.diet === "carnivore") return pen;
   const veg = r.ingredients.reduce((g, i) => (foodById[i.id].category === "legume" && !STARCHES.has(i.id) ? g + i.grams : g), 0);
   if (veg < 100) pen += veg < 50 ? 0.3 : 0.15;

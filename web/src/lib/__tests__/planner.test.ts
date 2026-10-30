@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { foodById } from "../foods";
 import { Profile, computeTargets, diets } from "../nutrition";
-import { buildWeek } from "../planner";
+import { buildWeek, needsOven } from "../planner";
 import { recipes } from "../recipes";
 import { baseProfile } from "./fixtures";
 import { syntheticRecipes } from "./synthetic";
@@ -116,5 +116,28 @@ describe("buildWeek", () => {
       best = Math.min(best, performance.now() - t0);
     }
     expect(best).toBeLessThan(150);
+  });
+});
+
+describe("mode étudiant", () => {
+  const etudiant: Profile = { ...baseProfile, kitchen: "etudiant" };
+
+  it("reconnaît les recettes qui demandent un four", () => {
+    const base = { id: "x", name: "x", meal: "plat" as const, minutes: 10, ingredients: [] };
+    expect(needsOven({ ...base, steps: ["Bats les œufs à la fourchette."] })).toBe(false);
+    expect(needsOven({ ...base, steps: ["Préchauffe à 200 °C."] })).toBe(true);
+    expect(needsOven({ ...base, steps: ["Enfourne 20 min au four."] })).toBe(true);
+    expect(needsOven({ ...base, steps: ["Au four."], equipment: ["poele"] })).toBe(false);
+    expect(needsOven({ ...base, steps: [], equipment: ["four"] })).toBe(true);
+  });
+
+  it.each(["equilibre", "mediterraneen", "vegetarien", "proteine", "low-carb"] as const)("propose des plats rapides et sans four (%s)", (diet) => {
+    const { t, week } = plan({ ...etudiant, diet });
+    expect(week.days).toHaveLength(7);
+    expect(Math.abs(avg(week, "kcal") - t.kcal) / t.kcal).toBeLessThan(0.03);
+    const meals = week.days.flatMap((d) => d.meals.map((m) => m.recipe));
+    const plats = meals.filter((r) => r.meal === "plat");
+    expect(plats.filter((r) => r.minutes <= 20).length / plats.length).toBeGreaterThanOrEqual(0.8);
+    expect(meals.filter(needsOven)).toEqual([]);
   });
 });
