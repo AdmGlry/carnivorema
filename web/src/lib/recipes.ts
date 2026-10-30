@@ -1,4 +1,5 @@
 import { foodById } from "./foods";
+import { soukPricePerKg } from "./souk";
 import { extraRecipes } from "./recipes-extra";
 
 export type MealType = "petit-dej" | "plat" | "collation";
@@ -64,7 +65,16 @@ export const recipes: Recipe[] = [...baseRecipes, ...extraRecipes];
 
 export type Nutrition = { kcal: number; protein: number; carbs: number; fat: number; cost: number };
 
-export function recipeNutrition(r: Recipe, scale = 1): Nutrition {
+export type ProduceSource = "supermarche" | "souk";
+
+/** Prix au gramme : prix du supermarché, ou estimation au souk pour les fruits et légumes suivis. */
+export function pricePerGram(id: string, produce: ProduceSource = "supermarche") {
+  const f = foodById[id];
+  const souk = produce === "souk" ? soukPricePerKg(id) : undefined;
+  return souk !== undefined ? souk / 1000 : f.priceMad / f.packG;
+}
+
+export function recipeNutrition(r: Recipe, scale = 1, produce: ProduceSource = "supermarche"): Nutrition {
   return r.ingredients.reduce(
     (acc, { id, grams }) => {
       const f = foodById[id];
@@ -73,7 +83,7 @@ export function recipeNutrition(r: Recipe, scale = 1): Nutrition {
       acc.protein += f.protein * g;
       acc.carbs += f.carbs * g;
       acc.fat += f.fat * g;
-      acc.cost += (f.priceMad / f.packG) * grams * scale;
+      acc.cost += pricePerGram(id, produce) * grams * scale;
       return acc;
     },
     { kcal: 0, protein: 0, carbs: 0, fat: 0, cost: 0 },

@@ -1,5 +1,5 @@
 import { foodById } from "./foods";
-import { Recipe, recipeNutrition } from "./recipes";
+import { ProduceSource, Recipe, recipeNutrition } from "./recipes";
 
 export type Sex = "homme" | "femme";
 export type Goal = "perdre" | "perdre-doux" | "maintenir" | "prendre";
@@ -99,6 +99,8 @@ export type Profile = {
   lactoseFree: boolean;
   people: number;
   monthlyBudget: number;
+  // Où sont achetés les fruits et légumes (supermarché par défaut).
+  produce?: ProduceSource;
 };
 
 export type Targets = {

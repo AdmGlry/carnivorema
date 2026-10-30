@@ -9,7 +9,7 @@ import PlanResults from "./PlanResults";
 import Scale3D from "./Scale3D";
 import { Confetti, tiltHandlers } from "./fun";
 
-const STORAGE_KEY = "mizan-profil-v1";
+const STORAGE_KEY = "mizan-profil-v2";
 
 const defaults: Profile = {
   sex: "femme",
@@ -25,7 +25,7 @@ const defaults: Profile = {
   monthlyBudget: 1500,
 };
 
-type StepId = "sexe" | "age" | "poids" | "taille" | "activite" | "objectif" | "regime" | "allergies" | "foyer" | "budget";
+type StepId = "sexe" | "age" | "poids" | "taille" | "activite" | "objectif" | "regime" | "allergies" | "courses" | "foyer" | "budget";
 
 const STEPS: { id: StepId; title: string; hint: string }[] = [
   { id: "sexe", title: "Tu es…", hint: "Le métabolisme de base n'est pas le même pour un homme et pour une femme." },
@@ -36,6 +36,7 @@ const STEPS: { id: StepId; title: string; hint: string }[] = [
   { id: "objectif", title: "Ton objectif ?", hint: "On ajuste tes calories en douceur, sans régime extrême." },
   { id: "regime", title: "Comment tu manges ?", hint: "Tu pourras changer à tout moment." },
   { id: "allergies", title: "Quelque chose à éviter ?", hint: "Coche ce qui s'applique, ou passe." },
+  { id: "courses", title: "Tes fruits et légumes, tu les achètes où ?", hint: "Au souk, ils coûtent souvent moins cher. On estime leur prix chaque semaine." },
   { id: "foyer", title: "Vous êtes combien à table ?", hint: "La liste de courses sera calculée pour tout le foyer." },
   { id: "budget", title: "Ton budget courses par mois ?", hint: "Pour tout le foyer, en dirhams." },
 ];
@@ -241,6 +242,7 @@ export default function Onboarding() {
     objectif: answers.goal !== undefined,
     regime: answers.diet !== undefined,
     allergies: true,
+    courses: answers.produce !== undefined,
     foyer: p.people >= 1 && p.people <= 12,
     budget: p.monthlyBudget >= 100,
   };
@@ -285,6 +287,7 @@ export default function Onboarding() {
       { label: diets.find((d) => d.id === p.diet)!.name, step: "regime" },
       ...(p.glutenFree ? [{ label: "Sans gluten", step: "allergies" as StepId }] : []),
       ...(p.lactoseFree ? [{ label: "Sans lactose", step: "allergies" as StepId }] : []),
+      { label: p.produce === "souk" ? "Légumes au souk" : "Légumes au supermarché", step: "courses" },
       { label: `${p.people} pers.`, step: "foyer" },
       { label: `${p.monthlyBudget} MAD/mois`, step: "budget" },
     ];
@@ -443,6 +446,25 @@ export default function Onboarding() {
             <div className="grid gap-3">
               <Choice selected={p.glutenFree} onClick={() => set("glutenFree", !p.glutenFree)} title="Sans gluten" text="Pas de pain, pâtes, couscous ni flocons d'avoine" />
               <Choice selected={p.lactoseFree} onClick={() => set("lactoseFree", !p.lactoseFree)} title="Sans lactose" text="Pas de lait, yaourt, raïb ni kéfir" />
+            </div>
+          )}
+
+          {current.id === "courses" && (
+            <div className="grid gap-3">
+              <Choice
+                selected={answers.produce === "souk"}
+                onClick={() => pick("produce", "souk")}
+                badge="🧺"
+                title="Au souk, au marché ou chez le primeur"
+                text="Prix estimés à partir des prix de gros de Casablanca de la semaine"
+              />
+              <Choice
+                selected={answers.produce === "supermarche"}
+                onClick={() => pick("produce", "supermarche")}
+                badge="🛒"
+                title="Au supermarché"
+                text="Prix réels relevés chez Carrefour"
+              />
             </div>
           )}
 

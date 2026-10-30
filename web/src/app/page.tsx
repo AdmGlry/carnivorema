@@ -41,7 +41,8 @@ const stores = [
   { name: "Marjane", status: "Bientôt" },
   { name: "Aswak Assalam", status: "Bientôt" },
   { name: "BIM", status: "Bientôt" },
-  { name: "Boucheries & primeurs", status: "Bientôt" },
+  { name: "Souks & primeurs (estimation)", status: "Estimation" },
+  { name: "Boucheries", status: "Bientôt" },
 ];
 
 const steps = [
@@ -217,14 +218,14 @@ export default function Home() {
         </Section>
 
         {/* Calculateur */}
-        <Section id="essayer" kicker="Essaie maintenant" title="10 questions, une minute, ton menu.">
+        <Section id="essayer" kicker="Essaie maintenant" title="11 questions, une minute, ton menu.">
           <div className="grid items-center gap-10 md:grid-cols-2">
             <div>
               <p className="text-lg text-muted">
                 Une question par écran : tu réponds, ça avance. À la fin, tes besoins, ton menu de la semaine et ta liste de courses au prix réel.
               </p>
               <ol className="mt-6 flex flex-wrap gap-2 text-sm">
-                {["Sexe", "Âge", "Poids", "Taille", "Activité", "Objectif", "Régime", "Allergies", "Foyer", "Budget"].map((q, i) => (
+                {["Sexe", "Âge", "Poids", "Taille", "Activité", "Objectif", "Régime", "Allergies", "Souk ou supermarché", "Foyer", "Budget"].map((q, i) => (
                   <li key={q} className="rounded-full border border-border bg-card px-3 py-1.5">
                     <span className="text-muted tabular-nums">{i + 1}.</span> {q}
                   </li>
@@ -242,9 +243,9 @@ export default function Home() {
               <div className="flex items-center gap-3 text-sm text-muted">
                 <span>←</span>
                 <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-border">
-                  <span className="block h-full w-[10%] rounded-full bg-accent" />
+                  <span className="block h-full w-[9%] rounded-full bg-accent" />
                 </span>
-                <span className="tabular-nums">2/10</span>
+                <span className="tabular-nums">2/11</span>
               </div>
               <p className="font-display mt-8 text-3xl font-bold">Quel âge as-tu ?</p>
               <p className="mt-2 text-sm text-muted">Les besoins en calories baissent un peu avec l&apos;âge.</p>

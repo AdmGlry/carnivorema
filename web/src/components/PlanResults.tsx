@@ -5,6 +5,7 @@ import { PRICE_DATE, PRICE_SOURCE, categoryLabels, mad } from "@/lib/foods";
 import { Profile, computeTargets, goals } from "@/lib/nutrition";
 import { buildWeek } from "@/lib/planner";
 import { CountUp } from "./fun";
+import { WHOLESALE_DATE } from "@/lib/souk";
 
 const DAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 const MEALS = ["Petit-déj", "Déjeuner", "Dîner", "Collation", "Collation"];
@@ -159,7 +160,10 @@ export default function PlanResults({ profile: p, onBudget }: { profile: Profile
                       {items.map((s) => (
                         <li key={s.id} className="flex justify-between gap-2">
                           <span>
-                            {s.name} <span className="text-muted">· {s.packs} × {s.packLabel}</span>
+                            {s.name}{" "}
+                            <span className="text-muted">
+                              · {s.soukKg !== undefined ? `${s.soukKg.toLocaleString("fr-MA")} kg au souk` : `${s.packs} × ${s.packLabel}`}
+                            </span>
                           </span>
                           <span className="whitespace-nowrap tabular-nums">{mad(s.cost)}</span>
                         </li>
@@ -171,6 +175,8 @@ export default function PlanResults({ profile: p, onBudget }: { profile: Profile
             </div>
             <p className="mt-4 text-xs text-muted">
               Prix {PRICE_SOURCE} relevés le {PRICE_DATE}.
+              {p.produce === "souk" &&
+                ` Fruits et légumes : estimation au souk à partir des prix de gros de Casablanca du ${WHOLESALE_DATE}.`}
             </p>
           </div>
         </>

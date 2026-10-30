@@ -11,6 +11,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     page("/", 1, "weekly"),
     page("/prix", 0.9, "daily"),
+    page("/prix-du-souk", 0.9, "weekly"),
+    page("/commencer", 0.8, "monthly"),
     page("/recettes", 0.9, "weekly"),
     ...recipes.map((r) => page(`/recettes/${r.id}`, 0.7, "weekly")),
     ...diets.map((d) => page(`/regimes/${d.id}`, 0.8, "monthly")),

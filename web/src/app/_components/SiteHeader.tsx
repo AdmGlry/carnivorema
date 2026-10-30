@@ -3,7 +3,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { BRAND, BRAND_TLD } from "@/lib/config";
 
 const links = [
-  { href: "/#features", label: "Fonctionnalités" },
+  { href: "/prix-du-souk", label: "Souk" },
   { href: "/recettes", label: "Recettes" },
   { href: "/#regimes", label: "Régimes" },
   { href: "/prix", label: "Prix" },

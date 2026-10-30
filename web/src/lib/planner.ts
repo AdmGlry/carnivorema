@@ -1,6 +1,7 @@
 import { Category, categoryLabels, foodById } from "./foods";
 import { Profile, Targets, recipeAllowed } from "./nutrition";
 import { Nutrition, Recipe, recipeNutrition, recipes } from "./recipes";
+import { soukPricePerKg } from "./souk";
 
 export type DayPlan = {
   meals: { recipe: Recipe; scale: number }[];
@@ -23,6 +24,8 @@ export type ShoppingItem = {
   packs: number;
   packLabel: string;
   cost: number;
+  // Acheté au poids au souk : quantité arrondie au quart de kilo.
+  soukKg?: number;
 };
 
 const MIN_SCALE = 0.6;
@@ -88,7 +91,7 @@ export function buildWeek(p: Profile, t: Targets, pool: Recipe[] = recipes): Wee
   }
 
   const w = weightsFor(p);
-  const nutrition = new Map(allowed.map((r) => [r.id, recipeNutrition(r)]));
+  const nutrition = new Map(allowed.map((r) => [r.id, recipeNutrition(r, 1, p.produce)]));
   const byId = (a: Recipe, b: Recipe) => a.id.localeCompare(b.id);
   const breakfasts = preselect(allowed.filter((r) => r.meal === "petit-dej"), K_BREAKFAST, nutrition, t, w).sort(byId);
   const mains = preselect(allowed.filter((r) => r.meal === "plat"), K_MAIN, nutrition, t, w).sort(byId);
@@ -169,6 +172,12 @@ export function buildWeek(p: Profile, t: Targets, pool: Recipe[] = recipes): Wee
   }
   const shopping: ShoppingItem[] = [...grams.entries()].map(([id, g]) => {
     const f = foodById[id];
+    const souk = p.produce === "souk" ? soukPricePerKg(id) : undefined;
+    if (souk !== undefined) {
+      // Au souk, on achète au poids : arrondi au quart de kilo.
+      const kg = Math.max(0.25, Math.ceil(g / 250) / 4);
+      return { id, name: f.name, category: f.category, grams: g, packs: 1, packLabel: "", cost: kg * souk, soukKg: kg };
+    }
     const packs = Math.ceil(g / f.packG);
     return { id, name: f.name, category: f.category, grams: g, packs, packLabel: f.packLabel, cost: packs * f.priceMad };
   });
