@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PRICE_DATE, PRICE_SOURCE, categoryLabels, foodById, mad } from "@/lib/foods";
-import { mealLabels, recipeNutrition, recipes } from "@/lib/recipes";
+import { equipmentLabels, mealLabels, recipeNutrition, recipes, tagLabels } from "@/lib/recipes";
 import JsonLd from "../../_components/JsonLd";
 import { SITE_URL, compatibleDiets, recipeHasGluten, recipeHasLactose, round } from "../../_site";
 
@@ -11,6 +11,9 @@ export const dynamicParams = false;
 export function generateStaticParams() {
   return recipes.map((r) => ({ id: r.id }));
 }
+
+const tagEmoji: Record<string, string> = { etudiant: "🎓", fitness: "💪", "meal-prep": "🍱" };
+const equipmentEmoji: Record<string, string> = { "sans-cuisson": "🥗", "micro-ondes": "📡", poele: "🍳", casserole: "🍲", four: "🔥", mixeur: "🌀" };
 
 const find = (id: string) => recipes.find((r) => r.id === id);
 
@@ -86,6 +89,32 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
       </nav>
       <p className="mt-6 text-sm font-semibold uppercase text-accent">{mealLabels[r.meal]} · {r.minutes} min</p>
       <h1 className="mt-2 text-3xl font-extrabold sm:text-5xl">{r.name}</h1>
+      {((r.tags?.length ?? 0) > 0 || (r.equipment?.length ?? 0) > 0) && (
+        <ul aria-label="Profil et matériel" className="mt-4 flex flex-wrap gap-2">
+          {(r.tags ?? []).map((t) => (
+            <li key={t}>
+              {t === "meal-prep" ? (
+                <span className="inline-block rounded-full bg-accent-soft px-3 py-1 text-sm font-semibold text-accent">
+                  <span aria-hidden="true">{tagEmoji[t]} </span>
+                  {tagLabels[t]}
+                </span>
+              ) : (
+                <Link href={`/recettes?filtres=${t}`} className="inline-block rounded-full bg-accent px-3 py-1 text-sm font-semibold text-on-accent">
+                  <span aria-hidden="true">{tagEmoji[t]} </span>
+                  {tagLabels[t]}
+                  <span className="sr-only"> : voir toutes les recettes de ce profil</span>
+                </Link>
+              )}
+            </li>
+          ))}
+          {(r.equipment ?? []).map((e) => (
+            <li key={e} className="rounded-full border border-border bg-card px-3 py-1 text-sm">
+              <span aria-hidden="true">{equipmentEmoji[e]} </span>
+              {equipmentLabels[e]}
+            </li>
+          ))}
+        </ul>
+      )}
 
       <dl className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
