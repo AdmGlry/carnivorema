@@ -109,7 +109,7 @@ export const healthyRecipes: Recipe[] = [
     name: "Chili aux haricots, poivrons & riz",
     meal: "plat",
     minutes: 30,
-    ingredients: [{ id: "haricot-blanc", grams: 70 }, { id: "riz", grams: 60 }, { id: "poivron", grams: 80 }, { id: "tomate", grams: 150 }, { id: "oignon", grams: 40 }, { id: "huile-olive", grams: 8 }],
+    ingredients: [{ id: "haricot-blanc", grams: 100 }, { id: "riz", grams: 35 }, { id: "poivron", grams: 80 }, { id: "tomate", grams: 150 }, { id: "oignon", grams: 40 }, { id: "huile-olive", grams: 5 }],
     steps: ["Utilise des haricots déjà cuits (ou cuis-les la veille) et lance la cuisson du riz.", "Fais revenir l'oignon et le poivron 5 minutes dans l'huile d'olive.", "Ajoute les tomates, les haricots, du cumin, du paprika et du piment, et laisse mijoter 15 minutes.", "Sers sur le riz avec de la coriandre."],
   },
   {
@@ -133,7 +133,7 @@ export const healthyRecipes: Recipe[] = [
     name: "Bowl houmous, quinoa & légumes rôtis",
     meal: "plat",
     minutes: 30,
-    ingredients: [{ id: "pois-chiche", grams: 70 }, { id: "quinoa", grams: 50 }, { id: "courgette", grams: 100 }, { id: "poivron", grams: 80 }, { id: "huile-olive", grams: 10 }],
+    ingredients: [{ id: "pois-chiche", grams: 90 }, { id: "quinoa", grams: 40 }, { id: "courgette", grams: 100 }, { id: "poivron", grams: 80 }, { id: "huile-olive", grams: 10 }],
     steps: ["Utilise des pois chiches déjà cuits ; mixe-en la moitié avec un peu d'huile d'olive, de l'ail, du citron et de l'eau pour faire un houmous.", "Fais rôtir la courgette et le poivron en morceaux 20 minutes à 210 °C avec le reste de l'huile.", "Fais cuire le quinoa 12 minutes.", "Dresse le quinoa, les légumes, les pois chiches entiers et le houmous dans un bol."],
   },
   {
@@ -157,7 +157,7 @@ export const healthyRecipes: Recipe[] = [
     name: "Dahl de lentilles aux épinards & riz",
     meal: "plat",
     minutes: 30,
-    ingredients: [{ id: "lentilles", grams: 70 }, { id: "riz", grams: 50 }, { id: "epinards", grams: 100 }, { id: "tomate", grams: 100 }, { id: "oignon", grams: 40 }, { id: "huile-table", grams: 8 }],
+    ingredients: [{ id: "lentilles", grams: 90 }, { id: "riz", grams: 30 }, { id: "epinards", grams: 100 }, { id: "tomate", grams: 100 }, { id: "oignon", grams: 40 }, { id: "huile-table", grams: 5 }],
     steps: ["Fais revenir l'oignon dans l'huile avec du curry, du curcuma, du gingembre et de l'ail.", "Ajoute les lentilles, les tomates et 3 fois leur volume d'eau, et laisse cuire 20 minutes.", "Lance la cuisson du riz en parallèle.", "Ajoute les épinards 2 minutes avant la fin et sers avec le riz."],
   },
   {
@@ -183,6 +183,39 @@ export const healthyRecipes: Recipe[] = [
     minutes: 10,
     ingredients: [{ id: "pois-chiche", grams: 60 }, { id: "thon", grams: 80 }, { id: "poivron", grams: 80 }, { id: "concombre", grams: 80 }, { id: "oignon", grams: 20 }, { id: "huile-olive", grams: 10 }],
     steps: ["Utilise des pois chiches déjà cuits, rincés et égouttés.", "Coupe le poivron, le concombre et l'oignon en petits dés.", "Ajoute le thon émietté.", "Assaisonne d'huile d'olive, de citron, de cumin, de sel et de persil."],
+  },
+
+  {
+    id: "quinoa-haricots-mexicain",
+    name: "Bowl mexicain quinoa, haricots & crudités",
+    meal: "plat",
+    minutes: 20,
+    ingredients: [{ id: "quinoa", grams: 30 }, { id: "haricot-blanc", grams: 100 }, { id: "poivron", grams: 80 }, { id: "tomate", grams: 100 }, { id: "avocat", grams: 30 }],
+    steps: ["Fais cuire le quinoa 12 minutes et réchauffe les haricots déjà cuits avec du cumin, du paprika et du sel.", "Coupe le poivron, la tomate et l'avocat en dés.", "Dresse le quinoa, les haricots et les crudités dans un bol.", "Arrose de citron et parsème de coriandre."],
+  },
+  {
+    id: "lentilles-corail-patate-douce",
+    name: "Soupe-repas lentilles, patate douce & carotte",
+    meal: "plat",
+    minutes: 25,
+    ingredients: [{ id: "lentilles", grams: 100 }, { id: "patate-douce", grams: 60 }, { id: "carotte", grams: 80 }, { id: "oignon", grams: 40 }, { id: "huile-olive", grams: 5 }],
+    steps: ["Fais revenir l'oignon dans l'huile d'olive avec du cumin, du curcuma et du gingembre.", "Ajoute les lentilles, la patate douce et la carotte en dés, et couvre de 3 fois leur volume d'eau.", "Laisse cuire 20 minutes, puis mixe à moitié pour garder des morceaux.", "Sale, ajoute un trait de citron et de la coriandre."],
+  },
+  {
+    id: "salade-lentilles-crudites",
+    name: "Salade de lentilles, concombre, tomate & herbes",
+    meal: "plat",
+    minutes: 25,
+    ingredients: [{ id: "lentilles", grams: 90 }, { id: "concombre", grams: 100 }, { id: "tomate", grams: 100 }, { id: "poivron-vert", grams: 50 }, { id: "huile-olive", grams: 5 }],
+    steps: ["Fais cuire les lentilles 20 minutes à l'eau, sans sel, puis égoutte-les et laisse tiédir.", "Coupe le concombre, la tomate et le poivron en petits dés.", "Mélange avec les lentilles, l'huile d'olive, le jus d'un demi-citron, du cumin et du sel.", "Ajoute beaucoup de persil et de menthe."],
+  },
+  {
+    id: "oeufs-patate-douce-epinards",
+    name: "Œufs au plat, patate douce & épinards",
+    meal: "plat",
+    minutes: 20,
+    ingredients: [{ id: "oeuf", grams: 150 }, { id: "patate-douce", grams: 150 }, { id: "epinards", grams: 100 }, { id: "huile-olive", grams: 8 }],
+    steps: ["Coupe la patate douce en petits cubes et fais-la dorer 12 minutes à couvert dans l'huile d'olive.", "Ajoute les épinards et laisse-les tomber 2 minutes avec de l'ail.", "Creuse des puits, casse les œufs, couvre et laisse cuire 4 minutes.", "Sale, poivre et ajoute une pincée de paprika."],
   },
 
   // Plats complets pauvres en glucides (low-carb et cétogène)
@@ -233,7 +266,7 @@ export const healthyRecipes: Recipe[] = [
     name: "Pois chiches sautés aux légumes & riz",
     meal: "plat",
     minutes: 20,
-    ingredients: [{ id: "pois-chiche", grams: 70 }, { id: "riz", grams: 60 }, { id: "brocoli", grams: 80 }, { id: "poivron", grams: 80 }, { id: "huile-olive", grams: 10 }],
+    ingredients: [{ id: "pois-chiche", grams: 110 }, { id: "riz", grams: 30 }, { id: "brocoli", grams: 100 }, { id: "poivron", grams: 80 }, { id: "huile-olive", grams: 6 }],
     steps: ["Lance la cuisson du riz et utilise des pois chiches déjà cuits.", "Fais sauter le brocoli et le poivron 5 minutes à feu vif dans l'huile d'olive.", "Ajoute les pois chiches, de l'ail, du gingembre, du cumin et du sel, et fais dorer 3 minutes.", "Sers sur le riz."],
   },
   {
@@ -241,7 +274,7 @@ export const healthyRecipes: Recipe[] = [
     name: "Pâtes à la sauce lentilles & légumes",
     meal: "plat",
     minutes: 30,
-    ingredients: [{ id: "spaghetti", grams: 70 }, { id: "lentilles", grams: 50 }, { id: "tomate", grams: 150 }, { id: "carotte", grams: 60 }, { id: "champignons", grams: 60 }, { id: "huile-olive", grams: 8 }],
+    ingredients: [{ id: "spaghetti", grams: 50 }, { id: "lentilles", grams: 80 }, { id: "tomate", grams: 150 }, { id: "carotte", grams: 60 }, { id: "champignons", grams: 60 }, { id: "huile-olive", grams: 5 }],
     steps: ["Fais revenir la carotte râpée et les champignons dans l'huile d'olive 4 minutes.", "Ajoute les lentilles, les tomates, de l'origan et 2 verres d'eau, et laisse cuire 20 minutes.", "Fais cuire les pâtes pendant ce temps.", "Mélange les pâtes avec la sauce."],
   },
   {
@@ -249,7 +282,7 @@ export const healthyRecipes: Recipe[] = [
     name: "Patate douce farcie haricots, avocat & tomate",
     meal: "plat",
     minutes: 30,
-    ingredients: [{ id: "patate-douce", grams: 200 }, { id: "haricot-blanc", grams: 50 }, { id: "avocat", grams: 60 }, { id: "tomate", grams: 80 }],
+    ingredients: [{ id: "patate-douce", grams: 200 }, { id: "haricot-blanc", grams: 80 }, { id: "avocat", grams: 60 }, { id: "tomate", grams: 80 }],
     steps: ["Coupe la patate douce en deux et fais-la rôtir 25 minutes à 210 °C, face coupée en dessous.", "Réchauffe les haricots déjà cuits avec du cumin, du paprika et du sel.", "Coupe l'avocat et la tomate en dés.", "Garnis la patate douce de haricots, d'avocat et de tomate, avec un trait de citron."],
   },
 

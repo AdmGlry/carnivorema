@@ -49,7 +49,7 @@ const STARCHES = new Set(["riz", "couscous", "spaghetti", "quinoa", "semoule", "
 // Pénalité d'une recette : on préfère les assiettes complètes (légumes + féculent ou légumineuses)
 // et les recettes rapides, sans exclure les plats mijotés.
 function recipePenalty(r: Recipe, p: Profile) {
-  let pen = (Math.max(0, r.minutes - 30) / 90) * 0.2;
+  let pen = (Math.max(0, r.minutes - 30) / 60) * 0.3;
   if (r.meal !== "plat" || p.diet === "carnivore") return pen;
   const veg = r.ingredients.reduce((g, i) => (foodById[i.id].category === "legume" && !STARCHES.has(i.id) ? g + i.grams : g), 0);
   if (veg < 100) pen += veg < 50 ? 0.3 : 0.15;
@@ -139,7 +139,7 @@ export function buildWeek(p: Profile, t: Targets, pool: Recipe[] = recipes): Wee
             snackSets[s].length * 0.02 +
             Math.max(0, scale - COMFORT_SCALE) * 0.15 +
             // Assiettes complètes et recettes rapides.
-            (pb[b] + pm[l] + pm[d] + ps[s]) * 0.5;
+            (pb[b] + pm[l] + pm[d] + ps[s]) * 0.7;
           candidates.push({ b, l, d, s, scale, score, kcalGap });
         }
       }

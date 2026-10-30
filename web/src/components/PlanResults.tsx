@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo } from "react";
 import { PRICE_DATE, PRICE_SOURCE, categoryLabels, mad } from "@/lib/foods";
 import { Profile, computeTargets, goals } from "@/lib/nutrition";
@@ -115,7 +116,7 @@ export default function PlanResults({ profile: p, onBudget }: { profile: Profile
 
           <div className="rounded-2xl border border-border bg-card p-6">
             <h3 className="font-display text-lg font-bold">Ton menu de la semaine</h3>
-            <p className="text-sm text-muted">Portions ajustées à tes calories. Valeurs par personne.</p>
+            <p className="text-sm text-muted">Assiettes complètes et rapides en priorité. Portions ajustées à tes calories, valeurs par personne. Clique sur un plat pour la recette.</p>
             <div className="mt-4 space-y-3">
               {week.days.map((d, i) => (
                 <div key={i} className="rounded-xl bg-background p-4">
@@ -131,8 +132,11 @@ export default function PlanResults({ profile: p, onBudget }: { profile: Profile
                       <li key={j}>
                         <span className="text-xs text-accent">{MEALS[j]}</span>
                         <br />
-                        {m.recipe.name}
+                        <Link href={`/recettes/${m.recipe.id}`} className="hover:text-accent hover:underline">
+                          {m.recipe.name}
+                        </Link>
                         {Math.abs(m.scale - 1) > 0.05 && <span className="text-muted"> ×{m.scale.toFixed(1)}</span>}
+                        <span className="block text-xs text-muted">{m.recipe.minutes} min</span>
                       </li>
                     ))}
                   </ul>

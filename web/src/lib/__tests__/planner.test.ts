@@ -15,6 +15,15 @@ const avg = (week: ReturnType<typeof buildWeek>, key: "kcal" | "protein") => wee
 const femme: Profile = { ...baseProfile, sex: "femme", weightKg: 60, heightCm: 165, age: 28, goal: "maintenir" };
 
 describe("buildWeek", () => {
+  it.each(["equilibre", "mediterraneen", "vegetarien", "vegan", "proteine"] as const)("privilégie des assiettes complètes et rapides (%s)", (diet) => {
+    const { week } = plan({ ...baseProfile, diet });
+    const plats = week.days.flatMap((d) => d.meals.filter((m) => m.recipe.meal === "plat").map((m) => m.recipe));
+    const veg = (r: (typeof plats)[number]) =>
+      r.ingredients.filter((i) => foodById[i.id].category === "legume" && !["pdt", "patate-douce"].includes(i.id)).reduce((g, i) => g + i.grams, 0);
+    expect(plats.filter((r) => veg(r) >= 100).length / plats.length).toBeGreaterThanOrEqual(0.8);
+    expect(plats.filter((r) => r.minutes <= 45).length / plats.length).toBeGreaterThanOrEqual(0.8);
+  });
+
   it.each(diets.map((d) => d.id))("renvoie 7 jours au bon niveau de calories (%s)", (diet) => {
     for (const profile of [baseProfile, femme]) {
       const { t, week } = plan({ ...profile, diet });
