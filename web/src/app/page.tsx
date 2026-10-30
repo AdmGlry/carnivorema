@@ -5,6 +5,7 @@ import { BRAND } from "@/lib/config";
 import { PRICE_DATE, PRICE_SOURCE, categoryLabels, foods, mad, pricePerKg } from "@/lib/foods";
 import { diets, recipeAllowed } from "@/lib/nutrition";
 import { mealLabels, recipeNutrition, recipes } from "@/lib/recipes";
+import { wholesale, retailRange } from "@/lib/souk";
 import JsonLd from "./_components/JsonLd";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, compatibleDiets } from "./_site";
 
@@ -91,282 +92,289 @@ const faq = [
   },
 ];
 
-function Section({ id, kicker, title, children }: { id?: string; kicker: string; title: React.ReactNode; children: React.ReactNode }) {
+function Section({ id, kicker, title, children, className = "" }: { id?: string; kicker: string; title: React.ReactNode; children: React.ReactNode; className?: string }) {
   return (
-    <section id={id} className="mx-auto max-w-6xl scroll-mt-16 px-4 py-16 sm:py-20">
-      <p className="text-sm font-semibold uppercase tracking-wide text-accent">{kicker}</p>
-      <h2 className="mt-2 text-3xl font-bold sm:text-4xl">{title}</h2>
-      <div className="mt-10">{children}</div>
+    <section id={id} className={`reveal mx-auto max-w-6xl scroll-mt-24 px-4 py-20 sm:py-28 ${className}`}>
+      <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-accent">
+        <span className="h-px w-8 bg-accent" aria-hidden="true" />
+        {kicker}
+      </p>
+      <h2 className="mt-4 max-w-3xl text-3xl font-bold leading-[1.05] sm:text-5xl">{title}</h2>
+      <div className="mt-12">{children}</div>
     </section>
   );
 }
 
+const card = "spotlight glass min-w-0 rounded-[1.75rem] p-6 sm:p-7";
+
 export default function Home() {
   const withNutrition = recipes.map((r) => ({ r, n: recipeNutrition(r) }));
-  const example = ["omelette", "tagine-poulet", "lentilles"].map((id) => withNutrition.find((x) => x.r.id === id)!);
-  const exampleTotal = example.reduce((s, x) => s + x.n.cost, 0);
-  const cheapest = Math.min(...withNutrition.filter((x) => x.r.meal === "plat").map((x) => x.n.cost));
-  const priceSample = Object.keys(categoryLabels).flatMap((cat) =>
-    foods.filter((f) => f.category === cat).sort((a, b) => pricePerKg(a) - pricePerKg(b)).slice(0, 2),
-  );
+  const plats = withNutrition.filter((x) => x.r.meal === "plat");
+  const cheapest = Math.min(...plats.map((x) => x.n.cost));
+  const fitness = withNutrition.filter((x) => x.r.tags?.includes("fitness"));
+  const featured = [...fitness].filter((x) => x.r.meal === "plat").sort((a, b) => b.n.protein / b.n.cost - a.n.protein / a.n.cost).slice(0, 6);
+  const day = ["fm-pancakes-avoine-banane", "fp-bowl-poulet-cumin-semoule", "fp-dal-lentilles-oeufs"]
+    .map((id) => withNutrition.find((x) => x.r.id === id))
+    .filter((x): x is (typeof withNutrition)[number] => Boolean(x));
+  const dayTotal = day.reduce((a, x) => ({ cost: a.cost + x.n.cost, kcal: a.kcal + x.n.kcal, protein: a.protein + x.n.protein }), { cost: 0, kcal: 0, protein: 0 });
+  const ticker = [
+    ...foods.slice(0, 18).map((f) => `${f.name} · ${mad(pricePerKg(f))}/kg`),
+    ...wholesale.slice(0, 8).map((w) => {
+      const r = retailRange(w);
+      return `${w.name} au souk · ${r.low.toLocaleString("fr-MA")}–${r.high.toLocaleString("fr-MA")} DH`;
+    }),
+  ];
+  const heroWords = ["Ton", "corps.", "Ton", "régime."];
 
   return (
     <>
-        {/* Hero : la balance (mizan) en 3D */}
-        <section className="mx-auto grid max-w-6xl items-center gap-8 px-4 pb-12 pt-12 md:grid-cols-[1.1fr_1fr] md:pt-20">
-          <div className="text-center md:text-left">
-            <span className="rounded-full bg-accent-soft px-3 py-1 text-sm font-medium text-accent">
-              <span aria-hidden="true">🇲🇦 </span>Pensé pour le Maroc
+      {/* Héros */}
+      <section className="relative mx-auto grid max-w-6xl items-center gap-6 px-4 pb-10 pt-10 md:min-h-[calc(100svh-5rem)] md:grid-cols-[1.15fr_1fr] md:pt-6">
+        <div className="text-center md:text-left">
+          <span className="glass inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold sm:text-sm">
+            <span className="relative flex size-2">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-75" />
+              <span className="relative inline-flex size-2 rounded-full bg-accent" />
             </span>
-            <h1 className="mt-6 text-4xl font-extrabold leading-[1.05] sm:text-6xl">
-              Mange selon ton corps, ton régime <span className="text-accent">et ton budget</span>
-            </h1>
-            <p className="mx-auto mt-6 max-w-xl text-lg text-muted md:mx-0">
-              Perdre, maintenir ou prendre du poids : {BRAND} calcule tes besoins, compose ton menu de la semaine selon ton régime et te donne la liste
-              de courses au vrai prix de ton supermarché.
-            </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-3 md:justify-start">
-              <Link href="/commencer" className="rounded-full bg-accent px-6 py-3 font-semibold text-on-accent transition-transform hover:-translate-y-0.5">
-                Calculer mon menu gratuitement
-              </Link>
-              <a href="#regimes" className="rounded-full border border-border px-6 py-3 font-semibold">
-                Voir les 8 régimes
-              </a>
-            </div>
-          </div>
-          <HeroScale />
-        </section>
-        <div className="mx-auto max-w-6xl px-4 pb-4 text-center">
-          <p className="text-sm text-muted">Les prix de tes enseignes, relevés pour de vrai</p>
-          <ul className="mt-4 flex flex-wrap justify-center gap-2">
-            {stores.map((s) => (
-              <li key={s.name} className={`rounded-full border px-4 py-1.5 text-sm ${s.status === "Bientôt" ? "border-dashed border-border text-muted" : "border-accent bg-accent-soft font-medium text-accent"}`}>
-                {s.name}
-                {s.status === "Bientôt" ? " · bientôt" : " ✓"}
-              </li>
+            🇲🇦 {recipes.length} recettes · prix réels · {diets.length} régimes
+          </span>
+          <h1 className="mt-7 text-[2.6rem] font-bold leading-[0.95] sm:text-7xl lg:text-[4.75rem]">
+            {heroWords.map((w, i) => (
+              <span key={i} className="rise mr-[0.25em]" style={{ "--i": i } as React.CSSProperties}>
+                {w}
+              </span>
             ))}
-          </ul>
-        </div>
-
-        {/* Le mécanisme */}
-        <Section id="features" kicker="Le mécanisme" title={<>Chaque repas a un prix <span className="text-accent">et des calories.</span></>}>
-          <div className="grid items-center gap-10 md:grid-cols-2">
-            <div className="space-y-4 text-lg text-muted">
-              <p>
-                {BRAND} calcule le coût <strong className="text-foreground">et</strong> la valeur nutritionnelle de chaque recette, ingrédient par
-                ingrédient, à partir des <strong className="text-foreground">prix réellement affichés</strong> par ton enseigne.
-              </p>
-              <p>Puis il ajuste les portions pour atteindre tes calories et tes protéines, sans dépasser ton budget.</p>
-            </div>
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-              <div className="flex justify-between text-sm text-muted">
-                <span className="font-semibold text-foreground">Exemple de journée</span>
-                <span>1 personne</span>
-              </div>
-              <ul className="mt-4 divide-y divide-border">
-                {example.map(({ r, n }) => (
-                  <li key={r.id} className="flex justify-between gap-4 py-3">
-                    <span>
-                      {r.name}
-                      <span className="block text-xs text-muted">{Math.round(n.kcal)} kcal · {Math.round(n.protein)} g protéines</span>
-                    </span>
-                    <span className="font-semibold">{mad(n.cost)}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-4 flex justify-between border-t border-border pt-4 font-bold">
-                <span>Total de la journée</span>
-                <span className="text-accent">{mad(exampleTotal)}</span>
-              </div>
-              <p className="mt-3 text-xs text-muted">Prix {PRICE_SOURCE} du {PRICE_DATE}, hors huile et épices.</p>
-            </div>
-          </div>
-        </Section>
-
-        {/* Comment ça marche */}
-        <Section kicker="Comment ça marche" title="Tu décides une fois. Tout le reste suit.">
-          <ol className="grid gap-6 md:grid-cols-3">
-            {steps.map((s, i) => (
-              <li key={s.title} className="rounded-2xl border border-border bg-card p-6">
-                <span className="text-sm font-semibold text-accent">Étape {i + 1}</span>
-                <h3 className="mt-2 text-xl font-bold">{s.title}</h3>
-                <p className="mt-2 text-muted">{s.text}</p>
-              </li>
-            ))}
-          </ol>
-        </Section>
-
-        {/* Résultats concrets */}
-        <Section kicker="Concrètement" title="Ce que ça change">
-          <div className="grid gap-6 md:grid-cols-3">
-            <div className="rounded-2xl bg-accent-soft p-6">
-              <p className="text-4xl font-extrabold text-accent">dès {Math.ceil(cheapest)} MAD</p>
-              <p className="mt-2 font-semibold">le plat maison, par personne</p>
-              <p className="mt-1 text-sm text-muted">Calculé sur les prix {PRICE_SOURCE} du {PRICE_DATE}.</p>
-            </div>
-            <div className="rounded-2xl bg-accent-soft p-6">
-              <p className="text-4xl font-extrabold text-accent">{diets.length} régimes</p>
-              <p className="mt-2 font-semibold">+ sans gluten et sans lactose</p>
-              <p className="mt-1 text-sm text-muted">Du végan au carnivore, avec les macros adaptées.</p>
-            </div>
-            <div className="rounded-2xl bg-accent-soft p-6">
-              <p className="text-4xl font-extrabold text-accent">{foods.length} produits</p>
-              <p className="mt-2 font-semibold">suivis au prix réel</p>
-              <p className="mt-1 text-sm text-muted">Viandes, poissons, légumes, féculents, laitiers… et bientôt plus d&apos;enseignes.</p>
-            </div>
-          </div>
-        </Section>
-
-        {/* Calculateur */}
-        <Section id="essayer" kicker="Essaie maintenant" title="12 questions, une minute, ton menu.">
-          <div className="grid items-center gap-10 md:grid-cols-2">
-            <div>
-              <p className="text-lg text-muted">
-                Une question par écran : tu réponds, ça avance. À la fin, tes besoins, ton menu de la semaine et ta liste de courses au prix réel.
-              </p>
-              <ol className="mt-6 flex flex-wrap gap-2 text-sm">
-                {["Sexe", "Âge", "Poids", "Taille", "Activité", "Objectif", "Régime", "Allergies", "Souk ou supermarché", "Foyer", "Budget"].map((q, i) => (
-                  <li key={q} className="rounded-full border border-border bg-card px-3 py-1.5">
-                    <span className="text-muted tabular-nums">{i + 1}.</span> {q}
-                  </li>
-                ))}
-              </ol>
-              <Link href="/commencer" className="mt-8 inline-block rounded-full bg-accent px-6 py-3 font-semibold text-on-accent hover:opacity-90">
-                Commencer
-              </Link>
-            </div>
-            <Link
-              href="/commencer"
-              aria-label="Commencer le questionnaire"
-              className="mx-auto block w-full max-w-sm rounded-[2rem] border border-border bg-card p-6 shadow-sm transition-transform hover:-translate-y-1"
-            >
-              <div className="flex items-center gap-3 text-sm text-muted">
-                <span>←</span>
-                <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-border">
-                  <span className="block h-full w-[8%] rounded-full bg-accent" />
-                </span>
-                <span className="tabular-nums">2/12</span>
-              </div>
-              <p className="font-display mt-8 text-3xl font-bold">Quel âge as-tu ?</p>
-              <p className="mt-2 text-sm text-muted">Les besoins en calories baissent un peu avec l&apos;âge.</p>
-              <p className="mt-10 text-center">
-                <span className="font-display text-7xl font-bold tabular-nums">30</span> <span className="text-lg text-muted">ans</span>
-              </p>
-              <span className="mt-10 block rounded-full bg-accent py-3 text-center font-semibold text-on-accent">Continuer</span>
+            <br />
+            <span className="rise text-gradient" style={{ "--i": 4 } as React.CSSProperties}>
+              Ton budget.
+            </span>
+          </h1>
+          <p className="mx-auto mt-7 max-w-lg text-lg text-muted md:mx-0">
+            {BRAND} calcule tes besoins, compose ton menu de la semaine et te donne la liste de courses au vrai prix de ton supermarché ou du souk.
+          </p>
+          <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row md:justify-start">
+            <Link href="/commencer" className="btn-glow w-full rounded-2xl bg-accent px-8 py-4 text-center text-lg font-bold text-on-accent sm:w-auto">
+              Calcule mon menu →
+            </Link>
+            <Link href="/recettes" className="glass w-full rounded-2xl px-8 py-4 text-center font-semibold transition-colors hover:border-accent sm:w-auto">
+              🎲 Explorer les recettes
             </Link>
           </div>
-        </Section>
-
-        {/* Régimes */}
-        <Section id="regimes" kicker="Tous les régimes" title="Chacun sa façon de manger.">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {diets.map((d) => {
-              const count = recipes.filter((r) => recipeAllowed(r, { diet: d.id, glutenFree: false, lactoseFree: false })).length;
-              return (
-                <Link key={d.id} href={`/regimes/${d.id}`} className="rounded-2xl border border-border bg-card p-5 hover:border-accent">
-                  <p className="text-2xl" aria-hidden="true">{d.emoji}</p>
-                  <h3 className="mt-2 font-bold">{d.name}</h3>
-                  <p className="mt-1 text-sm text-muted">{d.description}</p>
-                  <p className="mt-3 text-xs font-semibold text-accent">{count} recettes compatibles →</p>
-                </Link>
-              );
-            })}
+          <p className="mt-4 text-sm text-muted">Gratuit · 1 minute · sans inscription</p>
+        </div>
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-8 rounded-full bg-accent/20 blur-3xl" aria-hidden="true" />
+          <HeroScale />
+          <div className="pointer-events-none absolute inset-0 hidden sm:block" aria-hidden="true">
+            <span className="float glass absolute left-0 top-6 rounded-2xl px-4 py-2 text-sm font-semibold">🔥 2 140 kcal</span>
+            <span className="float glass absolute right-2 top-16 rounded-2xl px-4 py-2 text-sm font-semibold" style={{ animationDelay: "1.5s" }}>
+              💪 152 g de protéines
+            </span>
+            <span className="float glass absolute bottom-28 left-4 rounded-2xl px-4 py-2 text-sm font-semibold" style={{ animationDelay: "3s" }}>
+              💸 {mad(dayTotal.cost || 25)} / jour
+            </span>
           </div>
-        </Section>
+        </div>
+      </section>
 
-        {/* Prix */}
-        <Section id="prix" kicker="Prix de la semaine" title="Les mêmes courses n'ont pas le même prix partout.">
-          <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-            <table className="w-full text-left text-sm">
-              <caption className="sr-only">Les deux produits les moins chers au kilo de chaque rayon, relevés le {PRICE_DATE}</caption>
-              <thead className="border-b border-border text-muted">
-                <tr>
-                  <th scope="col" className="p-3 sm:p-4">Produit</th>
-                  <th scope="col" className="hidden p-3 sm:p-4 sm:table-cell">Rayon</th>
-                  <th scope="col" className="p-3 sm:p-4 text-right">Prix affiché</th>
-                  <th scope="col" className="p-3 sm:p-4 text-right">Prix au kg</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {priceSample.map((f) => (
-                  <tr key={f.id}>
-                    <td className="p-3 sm:p-4">
-                      {f.name}
-                      {f.promo && <span className="ml-2 rounded bg-accent-soft px-1.5 py-0.5 text-xs text-accent">{f.promo}</span>}
-                    </td>
-                    <td className="hidden p-3 sm:p-4 text-muted sm:table-cell">{categoryLabels[f.category]}</td>
-                    <td className="whitespace-nowrap p-3 sm:p-4 text-right">
-                      {mad(f.priceMad)} <span className="block text-xs text-muted sm:inline sm:text-sm">/ {f.packLabel}</span>
-                    </td>
-                    <td className="whitespace-nowrap p-3 sm:p-4 text-right font-semibold">{mad(pricePerKg(f))}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className="mt-3 text-xs text-muted">Prix relevés en ligne sur {PRICE_SOURCE} le {PRICE_DATE}. Marques © leurs propriétaires respectifs.</p>
-          <Link href="/prix" className="mt-4 inline-block font-semibold text-accent">Voir tous les prix de la semaine →</Link>
-          <ul className="mt-8 grid gap-3 sm:grid-cols-3">
-            {stores.map((s) => (
-              <li key={s.name} className="flex justify-between rounded-xl border border-border bg-card px-4 py-3 text-sm">
-                <span className="font-medium">{s.name}</span>
-                <span className={s.status === "Bientôt" ? "text-muted" : "text-accent"}>{s.status}</span>
-              </li>
-            ))}
-          </ul>
-        </Section>
+      {/* Bandeau des prix en direct */}
+      <div className="relative overflow-hidden border-y border-border bg-accent py-3 text-on-accent" aria-label="Exemples de prix relevés">
+        <div className="marquee gap-10 whitespace-nowrap font-display text-sm font-semibold">
+          {[...ticker, ...ticker].map((t, i) => (
+            <span key={i} className="flex items-center gap-10" aria-hidden={i >= ticker.length ? true : undefined}>
+              {t}
+              <span aria-hidden="true">✦</span>
+            </span>
+          ))}
+        </div>
+      </div>
 
-        {/* Réserve de recettes */}
-        <Section kicker="Ta réserve" title={`${recipes.length} recettes, toutes chiffrées.`}>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {withNutrition.map(({ r, n }) => {
-              const compatible = compatibleDiets(r);
-              return (
-                <Link key={r.id} href={`/recettes/${r.id}`} className="flex flex-col rounded-2xl border border-border bg-card p-4 hover:border-accent">
-                  <span className="text-xs font-semibold uppercase text-accent">{mealLabels[r.meal]}</span>
-                  <h3 className="mt-1 font-bold">{r.name}</h3>
-                  <p className="mt-2 text-xs text-muted">
-                    {r.minutes} min · {Math.round(n.kcal)} kcal · {Math.round(n.protein)} g prot.
-                  </p>
-                  <p className="mt-1 font-semibold">{mad(n.cost)} /pers</p>
-                  <p className="mt-auto pt-3 text-sm" aria-label={`Régimes compatibles : ${compatible.map((d) => d.name).join(", ")}`}>
-                    <span aria-hidden="true">{compatible.map((d) => d.emoji).join(" ")}</span>
-                  </p>
-                </Link>
-              );
-            })}
-          </div>
-          <Link href="/recettes" className="mt-6 inline-block font-semibold text-accent">Filtrer les recettes par régime →</Link>
-        </Section>
-
-        {/* Bêta */}
-        <section id="beta" className="mx-auto max-w-6xl px-4 py-16">
-          <div className="rounded-3xl bg-accent px-6 py-12 text-center text-on-accent">
-            <h2 className="text-3xl font-bold sm:text-4xl">Sois parmi les premiers</h2>
-            <p className="mx-auto mt-3 max-w-xl opacity-90">
-              La bêta ouvre bientôt à Casablanca, Rabat et Marrakech : menus sauvegardés, partage en famille, alertes promo. Les premiers inscrits
-              auront un accès premium offert.
-            </p>
-            <div className="mx-auto mt-6 max-w-md">
-              <WaitlistForm tone="onAccent" source="landing-beta" />
+      {/* Bento */}
+      <Section id="features" kicker="Tout-en-un" title={<>Ton coach nutrition, <span className="text-gradient">ton comptable</span> et ton marché.</>}>
+        <div className="grid auto-rows-[minmax(180px,auto)] grid-cols-1 gap-4 md:grid-cols-6">
+          {/* Journée type */}
+          <div className={`${card} md:col-span-4 md:row-span-2`}>
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-semibold text-muted">Une journée fitness type</p>
+              <span className="rounded-full bg-accent-soft px-3 py-1 text-xs font-bold text-accent">1 personne</span>
             </div>
+            <ul className="mt-6 space-y-3">
+              {day.map(({ r, n }, i) => (
+                <li key={r.id}>
+                  <Link href={`/recettes/${r.id}`} className="group flex items-center gap-4 rounded-2xl border border-border bg-background/40 p-4 transition-colors hover:border-accent">
+                    <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-accent-soft text-xl" aria-hidden="true">
+                      {["🥞", "🥗", "🍲"][i]}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-xs font-semibold uppercase tracking-wide text-accent">{mealLabels[r.meal]}</span>
+                      <span className="block font-semibold leading-snug group-hover:text-accent">{r.name}</span>
+                      <span className="block text-xs text-muted">
+                        {r.minutes} min · {Math.round(n.kcal)} kcal · {Math.round(n.protein)} g prot.
+                      </span>
+                    </span>
+                    <span className="shrink-0 font-display text-base font-bold tabular-nums sm:text-lg">{mad(n.cost)}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-6 grid grid-cols-3 gap-3 text-center">
+              {[
+                ["Total", mad(dayTotal.cost)],
+                ["Calories", `${Math.round(dayTotal.kcal)}`],
+                ["Protéines", `${Math.round(dayTotal.protein)} g`],
+              ].map(([k, v]) => (
+                <div key={k} className="rounded-2xl bg-accent-soft p-3">
+                  <p className="text-xs text-muted">{k}</p>
+                  <p className="font-display text-lg font-bold text-accent tabular-nums sm:text-xl">{v}</p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-3 text-xs text-muted">Prix {PRICE_SOURCE} du {PRICE_DATE}.</p>
           </div>
-        </section>
 
-        {/* FAQ */}
-        <Section kicker="FAQ" title="Questions fréquentes">
-          <div className="space-y-3">
-            {faq.map((f) => (
-              <details key={f.q} className="group rounded-xl border border-border bg-card p-5">
-                <summary className="cursor-pointer list-none font-semibold">
-                  {f.q}
-                  <span aria-hidden="true" className="float-right text-accent group-open:rotate-45">+</span>
-                </summary>
-                <p className="mt-3 text-muted">{f.a}</p>
-              </details>
-            ))}
+          <Link href="/commencer" className={`${card} group md:col-span-2`}>
+            <p className="text-4xl" aria-hidden="true">🎓</p>
+            <h3 className="mt-3 font-display text-xl font-bold">Mode étudiant</h3>
+            <p className="mt-2 text-sm text-muted">Plats en 20 min, une poêle ou un micro-ondes, petit budget.</p>
+            <p className="mt-4 text-sm font-bold text-accent transition-transform group-hover:translate-x-1">Activer →</p>
+          </Link>
+
+          <Link href="/prix-du-souk" className={`${card} group md:col-span-2`}>
+            <p className="text-4xl" aria-hidden="true">🥕</p>
+            <h3 className="mt-3 font-display text-xl font-bold">Prix du souk</h3>
+            <p className="mt-2 text-sm text-muted">La mercuriale des fruits et légumes, corrigée par la communauté.</p>
+            <p className="mt-4 text-sm font-bold text-accent transition-transform group-hover:translate-x-1">Voir les prix →</p>
+          </Link>
+
+          <div className={`${card} md:col-span-2`}>
+            <p className="font-display text-5xl font-bold text-gradient">dès {Math.ceil(cheapest)} DH</p>
+            <p className="mt-2 font-semibold">le plat maison, par personne</p>
           </div>
-        </Section>
+          <div className={`${card} md:col-span-2`}>
+            <p className="font-display text-5xl font-bold text-gradient">{fitness.length}</p>
+            <p className="mt-2 font-semibold">recettes fitness, riches en protéines</p>
+          </div>
+          <div className={`${card} md:col-span-2`}>
+            <p className="font-display text-5xl font-bold text-gradient">{foods.length}</p>
+            <p className="mt-2 font-semibold">produits suivis au prix réel</p>
+          </div>
+        </div>
+      </Section>
+
+      {/* Comment ça marche */}
+      <Section kicker="Comment ça marche" title="Trois étapes. Zéro prise de tête.">
+        <ol className="grid gap-4 md:grid-cols-3">
+          {steps.map((s, i) => (
+            <li key={s.title} className={card}>
+              <span className="font-display text-7xl font-bold text-transparent [-webkit-text-stroke:1.5px_var(--accent)]">0{i + 1}</span>
+              <h3 className="mt-4 font-display text-xl font-bold">{s.title}</h3>
+              <p className="mt-2 text-muted">{s.text}</p>
+            </li>
+          ))}
+        </ol>
+      </Section>
+
+      {/* Recettes vedettes */}
+      <Section kicker="Les plus rentables" title={<>Le plus de protéines <span className="text-gradient">par dirham.</span></>}>
+        <ul className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0">
+          {featured.map(({ r, n }) => (
+            <li key={r.id} className="w-[78%] shrink-0 snap-start md:w-auto">
+              <Link href={`/recettes/${r.id}`} className={`${card} group flex h-full flex-col`}>
+                <div className="flex items-start justify-between gap-3">
+                  <span className="text-xs font-bold uppercase tracking-wide text-accent">{r.minutes} min</span>
+                  <span className="rounded-2xl bg-accent px-3 py-1.5 text-center leading-none text-on-accent">
+                    <span className="block font-display text-xl font-bold">{Math.round(n.protein)}</span>
+                    <span className="text-[10px] font-semibold">g prot.</span>
+                  </span>
+                </div>
+                <h3 className="mt-4 font-display text-lg font-bold leading-tight group-hover:text-accent">{r.name}</h3>
+                <p className="mt-auto pt-6 text-sm text-muted">
+                  <span className="font-display text-2xl font-bold text-foreground">{mad(n.cost)}</span> / pers · {Math.round(n.kcal)} kcal
+                </p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <Link href="/recettes?filtres=fitness&tri=ratio" className="glass mt-6 inline-flex rounded-2xl px-6 py-3 font-semibold hover:border-accent">
+          Voir les {recipes.length} recettes →
+        </Link>
+      </Section>
+
+      {/* Régimes */}
+      <Section id="regimes" kicker="Tous les régimes" title="Du végan au carnivore. Chacun sa façon.">
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {diets.map((d) => {
+            const count = recipes.filter((r) => recipeAllowed(r, { diet: d.id, glutenFree: false, lactoseFree: false })).length;
+            return (
+              <Link key={d.id} href={`/regimes/${d.id}`} className={`${card} group !p-5`}>
+                <p className="text-4xl transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-125" aria-hidden="true">
+                  {d.emoji}
+                </p>
+                <h3 className="mt-4 font-display font-bold">{d.name}</h3>
+                <p className="mt-1 hidden text-sm text-muted sm:block">{d.description}</p>
+                <p className="mt-3 text-xs font-bold text-accent">{count} recettes →</p>
+              </Link>
+            );
+          })}
+        </div>
+      </Section>
+
+      {/* Enseignes */}
+      <Section id="prix" kicker="Tes enseignes" title="Les mêmes courses n'ont pas le même prix partout.">
+        <ul className="flex flex-wrap gap-2">
+          {stores.map((s) => (
+            <li
+              key={s.name}
+              className={`rounded-full px-4 py-2 text-sm ${s.status === "Bientôt" ? "border border-dashed border-border text-muted" : "bg-accent font-bold text-on-accent"}`}
+            >
+              {s.name}
+              {s.status === "Bientôt" ? " · bientôt" : " ✓"}
+            </li>
+          ))}
+        </ul>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link href="/prix" className="glass rounded-2xl px-6 py-3 font-semibold hover:border-accent">
+            Prix de la semaine →
+          </Link>
+          <Link href="/prix-du-souk" className="glass rounded-2xl px-6 py-3 font-semibold hover:border-accent">
+            Prix du souk →
+          </Link>
+        </div>
+      </Section>
+
+      {/* Bêta */}
+      <section id="beta" className="reveal mx-auto max-w-6xl px-4 py-16">
+        <div className="ring-gradient relative overflow-hidden rounded-[2.5rem] bg-card px-6 py-16 text-center sm:px-12">
+          <div className="pointer-events-none absolute -top-24 left-1/2 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-accent/25 blur-3xl" aria-hidden="true" />
+          <h2 className="relative text-3xl font-bold sm:text-5xl">
+            Sois parmi <span className="text-gradient">les premiers.</span>
+          </h2>
+          <p className="relative mx-auto mt-4 max-w-xl text-muted">
+            La bêta ouvre bientôt à Casablanca, Rabat et Marrakech : menus sauvegardés, partage en famille, alertes promo. Les premiers inscrits auront
+            un accès premium offert.
+          </p>
+          <div className="relative mx-auto mt-8 max-w-md">
+            <WaitlistForm source="landing-beta" />
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <Section kicker="FAQ" title="Questions fréquentes">
+        <div className="grid gap-3 md:grid-cols-2">
+          {faq.map((f) => (
+            <details key={f.q} className="group glass rounded-2xl p-5 open:border-accent">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold">
+                {f.q}
+                <span aria-hidden="true" className="grid size-7 shrink-0 place-items-center rounded-full bg-accent-soft text-accent transition-transform group-open:rotate-45">
+                  +
+                </span>
+              </summary>
+              <p className="mt-3 text-muted">{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </Section>
       <JsonLd data={jsonLd} />
     </>
   );

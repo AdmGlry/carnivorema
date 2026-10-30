@@ -1,13 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Figtree } from "next/font/google";
+import { Manrope, Unbounded } from "next/font/google";
+import Effects from "@/components/Effects";
+import MobileTabBar from "./_components/MobileTabBar";
 import SiteFooter from "./_components/SiteFooter";
 import SiteHeader from "./_components/SiteHeader";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, THEME_DARK, THEME_LIGHT } from "./_site";
 import "./globals.css";
 
-// Titres et grands chiffres : une grotesque à caractère ; texte courant : une sans-serif lisible.
-const display = Bricolage_Grotesque({ subsets: ["latin"], variable: "--font-display-face", display: "swap" });
-const body = Figtree({ subsets: ["latin"], variable: "--font-body-face", display: "swap" });
+// Titres et grands chiffres : une grotesque large et graphique ; texte courant : une sans-serif nette.
+const display = Unbounded({ subsets: ["latin"], variable: "--font-display-face", display: "swap" });
+const body = Manrope({ subsets: ["latin"], variable: "--font-body-face", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -52,8 +54,8 @@ export const viewport: Viewport = {
   colorScheme: "light dark",
 };
 
-// Applique le thème avant le premier rendu pour éviter le flash.
-const themeScript = `try{var t=localStorage.getItem("theme");if(t==="dark"||(!t&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}`;
+// Applique le thème avant le premier rendu pour éviter le flash. Sombre par défaut : c'est l'identité de Mizan.
+const themeScript = `try{if(localStorage.getItem("theme")!=="light")document.documentElement.classList.add("dark")}catch(e){document.documentElement.classList.add("dark")}`;
 
 export default function RootLayout({
   children,
@@ -65,7 +67,9 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="antialiased">
+      <body className="antialiased pb-24 md:pb-0">
+        <div className="zellige" aria-hidden="true" />
+        <div className="aurora" aria-hidden="true" />
         <a
           href="#contenu"
           className="sr-only rounded-full bg-accent px-4 py-2 font-semibold text-on-accent focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50"
@@ -77,6 +81,8 @@ export default function RootLayout({
           {children}
         </main>
         <SiteFooter />
+        <MobileTabBar />
+        <Effects />
       </body>
     </html>
   );

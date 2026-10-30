@@ -3,46 +3,37 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { BRAND, BRAND_TLD } from "@/lib/config";
 
 const links = [
-  { href: "/prix-du-souk", label: "Souk" },
   { href: "/recettes", label: "Recettes" },
+  { href: "/prix-du-souk", label: "Souk" },
   { href: "/#regimes", label: "Régimes" },
   { href: "/prix", label: "Prix" },
 ];
 
 export default function SiteHeader() {
   return (
-    <header className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-        <Link href="/" className="text-lg font-extrabold" aria-label={`${BRAND}${BRAND_TLD}, accueil`}>
-          <span aria-hidden="true">⚖️ </span>
+    <header className="sticky top-0 z-20 px-3 pt-3">
+      <div className="glass mx-auto flex max-w-5xl items-center justify-between gap-4 rounded-full py-2 pl-5 pr-2 shadow-lg shadow-black/10">
+        <Link href="/" className="font-display text-base font-bold tracking-tight" aria-label={`${BRAND}${BRAND_TLD}, accueil`}>
+          <span aria-hidden="true" className="mr-1.5 inline-grid size-7 place-items-center rounded-lg bg-accent text-sm text-on-accent">
+            ⚖
+          </span>
           {BRAND}
           <span className="text-accent">{BRAND_TLD}</span>
         </Link>
-        <nav aria-label="Navigation principale" className="hidden items-center gap-5 text-sm md:flex">
+        <nav aria-label="Navigation principale" className="hidden items-center gap-1 text-sm font-medium md:flex">
           {links.map((l) => (
-            <Link key={l.href} href={l.href} className="hover:text-accent">
+            <Link key={l.href} href={l.href} className="rounded-full px-4 py-2 text-muted transition-colors hover:bg-accent-soft hover:text-foreground">
               {l.label}
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <ThemeToggle />
-          <Link href="/commencer" className="rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-on-accent">
-            Mon menu
+          <Link href="/commencer" className="btn-glow hidden rounded-full bg-accent px-5 py-2 text-sm font-bold text-on-accent sm:inline-block">
+            Mon menu →
           </Link>
         </div>
       </div>
-      <nav aria-label="Navigation mobile" className="border-t border-border md:hidden">
-        <ul className="mx-auto flex max-w-6xl justify-between px-4 py-2 text-sm">
-          {links.map((l) => (
-            <li key={l.href}>
-              <Link href={l.href} className="hover:text-accent">
-                {l.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
     </header>
   );
 }

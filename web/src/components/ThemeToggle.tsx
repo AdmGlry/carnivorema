@@ -13,7 +13,7 @@ export default function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label="Basculer entre le thème clair et le thème sombre"
-      className="rounded-full border border-border px-3 py-1.5 text-sm hover:bg-card"
+      className="grid size-9 place-items-center rounded-full text-sm transition-colors hover:bg-accent-soft"
     >
       <span aria-hidden="true" className="dark:hidden">🌙</span>
       <span aria-hidden="true" className="hidden dark:inline">☀️</span>

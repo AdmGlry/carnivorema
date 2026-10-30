@@ -9,9 +9,9 @@ export const SITE_NAME = `${BRAND}${BRAND_TLD}`;
 export const SITE_DESCRIPTION =
   "Calcule tes besoins selon ton poids, ta taille et ton objectif, choisis ton régime et reçois ton menu de la semaine avec la liste de courses au vrai prix des supermarchés marocains.";
 
-export const THEME_LIGHT = "#fbf7f2";
-export const THEME_DARK = "#120d0b";
-export const ACCENT = "#b3261e";
+export const THEME_LIGHT = "#f2f5ec";
+export const THEME_DARK = "#060d0a";
+export const ACCENT = "#2f7a12";
 
 export const compatibleDiets = (r: Recipe) => diets.filter((d) => recipeAllowed(r, { diet: d.id, glutenFree: false, lactoseFree: false }));
 

@@ -3,26 +3,40 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #fbf7f2;
-  --foreground: #1c1410;
+  --background: #f2f5ec;
+  --foreground: #0a1510;
   --card: #ffffff;
-  --muted: #6b5d55;
-  --border: #eadfd5;
-  --accent: #b3261e;
-  --accent-soft: #fbe4e1;
+  --muted: #4c5e55;
+  --border: #d5dfcf;
+  --accent: #2f7a12;
+  --accent-soft: #e2f0d0;
   --on-accent: #ffffff;
+  /* Couleurs de marque, identiques dans les deux thèmes */
+  --lime: #c8f542;
+  --saffron: #ffb13b;
+  --coral: #ff6b5b;
+  --glass: rgb(255 255 255 / 0.7);
+  --aurora-1: rgb(200 245 66 / 0.35);
+  --aurora-2: rgb(255 177 59 / 0.25);
+  --aurora-3: rgb(64 196 160 / 0.2);
+  --pattern: rgb(10 21 16 / 0.07);
 }
 
 .dark {
-  --background: #120d0b;
-  --foreground: #f5ece6;
-  --card: #1d1613;
-  --muted: #b3a39a;
-  --border: #33271f;
-  --accent: #ef5a4f;
-  --accent-soft: #3a1714;
-  /* Texte sombre sur l'accent clair du mode sombre, pour garder un contraste suffisant. */
-  --on-accent: #1c0a08;
+  --background: #060d0a;
+  --foreground: #ecf6ef;
+  --card: #0d1813;
+  --muted: #93aa9e;
+  --border: #1d2e26;
+  --accent: #c8f542;
+  --accent-soft: #1a2610;
+  /* Texte sombre sur le citron, pour garder un contraste fort. */
+  --on-accent: #0b1500;
+  --glass: rgb(13 24 19 / 0.6);
+  --aurora-1: rgb(200 245 66 / 0.16);
+  --aurora-2: rgb(255 177 59 / 0.1);
+  --aurora-3: rgb(64 196 160 / 0.12);
+  --pattern: rgb(200 245 66 / 0.06);
 }
 
 @theme inline {
@@ -34,6 +48,10 @@
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
   --color-on-accent: var(--on-accent);
+  --color-lime: var(--lime);
+  --color-saffron: var(--saffron);
+  --color-coral: var(--coral);
+  --color-glass: var(--glass);
   --font-display: var(--font-display-face), ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -49,16 +67,202 @@ html {
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-body-face), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* Motif zellige (étoile à 8 branches) très discret, teinté par le thème */
+.zellige {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background: var(--pattern);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cpath d='M36 6l8.5 21.5L66 36l-21.5 8.5L36 66l-8.5-21.5L6 36l21.5-8.5z' fill='none' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E") 0 0 / 72px 72px;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cpath d='M36 6l8.5 21.5L66 36l-21.5 8.5L36 66l-8.5-21.5L6 36l21.5-8.5z' fill='none' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E") 0 0 / 72px 72px;
+}
+
+/* Aurores : trois halos qui dérivent lentement derrière la page. */
+.aurora {
+  position: fixed;
+  inset: -20vmax;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(35vmax 35vmax at 15% 10%, var(--aurora-1), transparent 70%),
+    radial-gradient(30vmax 30vmax at 85% 20%, var(--aurora-2), transparent 70%),
+    radial-gradient(40vmax 40vmax at 60% 90%, var(--aurora-3), transparent 70%);
+  filter: blur(20px);
+  animation: aurora 24s ease-in-out infinite alternate;
+}
+@keyframes aurora {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(4vmax, -3vmax, 0) rotate(8deg);
+  }
+  100% {
+    transform: translate3d(-3vmax, 4vmax, 0) rotate(-6deg);
+  }
 }
 
 h1,
 h2 {
   font-family: var(--font-display);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.035em;
   text-wrap: balance;
+}
+
+/* Verre dépoli */
+.glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid var(--border);
+}
+
+/* Texte en dégradé citron → safran */
+.text-gradient {
+  background: linear-gradient(100deg, var(--accent) 10%, var(--saffron) 60%, var(--coral) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.dark .text-gradient {
+  background-image: linear-gradient(100deg, var(--lime) 10%, var(--saffron) 60%, var(--coral) 100%);
+}
+
+/* Bouton principal lumineux */
+.btn-glow {
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--accent) 60%, transparent),
+    0 10px 40px -8px color-mix(in oklab, var(--accent) 70%, transparent);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+.btn-glow:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 1px var(--accent),
+    0 16px 60px -6px color-mix(in oklab, var(--accent) 85%, transparent);
+}
+
+/* Carte « projecteur » : un halo suit le pointeur (variables posées par Effects.tsx). */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+.spotlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 250ms;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklab, var(--accent) 22%, transparent), transparent 60%);
+}
+.spotlight:hover::after {
+  opacity: 1;
+}
+
+/* Bordure dégradée animée */
+.ring-gradient {
+  position: relative;
+}
+.ring-gradient::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(from var(--angle, 0deg), var(--lime), var(--saffron), var(--coral), var(--lime));
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: spin-angle 6s linear infinite;
+  pointer-events: none;
+}
+@property --angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes spin-angle {
+  to {
+    --angle: 360deg;
+  }
+}
+
+/* Bandeau qui défile en continu */
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 40s linear infinite;
+}
+.marquee:hover {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Flottement doux des pastilles autour du héros */
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+@keyframes float {
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Mots du titre qui montent un par un */
+.rise {
+  display: inline-block;
+  animation: rise 800ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 120ms);
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.6em) rotate(2deg);
+    filter: blur(8px);
+  }
+}
+
+/* Apparition au défilement (navigateurs compatibles ; sinon tout reste visible) */
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 25%;
+  }
+  @keyframes reveal {
+    from {
+      opacity: 0;
+      transform: translateY(40px) scale(0.98);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora,
+  .marquee,
+  .float,
+  .rise,
+  .reveal,
+  .ring-gradient::before {
+    animation: none !important;
+  }
 }
 
 /* Entrée de chaque écran du questionnaire : l'écran bascule en avant, comme une page qu'on tourne. */
