@@ -21,39 +21,90 @@ type Filters = {
   flags: Flag[];
 };
 
-const DEFAULTS: Filters = { diet: "tous", meal: "tous", equip: "tous", q: "", sort: "defaut", flags: [] };
+const DEFAULTS: Filters = {
+  diet: "tous",
+  meal: "tous",
+  equip: "tous",
+  q: "",
+  sort: "defaut",
+  flags: [],
+};
 
-const QUICK: { id: Flag; label: string; emoji: string; test: (r: RecipeCard) => boolean }[] = [
-  { id: "etudiant", label: "Étudiant", emoji: "🎓", test: (r) => r.tags.includes("etudiant") },
-  { id: "fitness", label: "Fitness", emoji: "💪", test: (r) => r.tags.includes("fitness") },
-  { id: "rapide", label: "≤ 15 min", emoji: "⚡", test: (r) => r.minutes <= 15 },
-  { id: "budget", label: "≤ 10 DH", emoji: "💸", test: (r) => r.costValue <= 10 },
-  { id: "proteines", label: "≥ 25 g de protéines", emoji: "🥩", test: (r) => r.protein >= 25 },
+const QUICK: {
+  id: Flag;
+  label: string;
+  emoji: string;
+  test: (r: RecipeCard) => boolean;
+}[] = [
+  {
+    id: "etudiant",
+    label: "Étudiant",
+    emoji: "🎓",
+    test: (r) => r.tags.includes("etudiant"),
+  },
+  {
+    id: "fitness",
+    label: "Fitness",
+    emoji: "💪",
+    test: (r) => r.tags.includes("fitness"),
+  },
+  {
+    id: "rapide",
+    label: "≤ 15 min",
+    emoji: "⚡",
+    test: (r) => r.minutes <= 15,
+  },
+  {
+    id: "budget",
+    label: "≤ 10 DH",
+    emoji: "💸",
+    test: (r) => r.costValue <= 10,
+  },
+  {
+    id: "proteines",
+    label: "≥ 25 g de protéines",
+    emoji: "🥩",
+    test: (r) => r.protein >= 25,
+  },
 ];
 
 // « Je n'ai que ça » : la recette ne demande rien d'autre que ce matériel.
 const EQUIPMENT: (Option & { kit: string[] })[] = [
-  { id: "micro-ondes", label: "📡 Micro-ondes", kit: ["micro-ondes", "sans-cuisson"] },
+  {
+    id: "micro-ondes",
+    label: "📡 Micro-ondes",
+    kit: ["micro-ondes", "sans-cuisson"],
+  },
   { id: "poele", label: "🍳 Poêle seule", kit: ["poele", "sans-cuisson"] },
   { id: "sans-cuisson", label: "🥗 Sans cuisson", kit: ["sans-cuisson"] },
 ];
 
-const SORTS: { id: SortId; label: string; compare?: (a: RecipeCard, b: RecipeCard) => number }[] = [
+const SORTS: {
+  id: SortId;
+  label: string;
+  compare?: (a: RecipeCard, b: RecipeCard) => number;
+}[] = [
   { id: "defaut", label: "Par défaut" },
-  { id: "proteines", label: "💪 Protéines", compare: (a, b) => b.protein - a.protein },
-  { id: "prix", label: "💸 Prix", compare: (a, b) => a.costValue - b.costValue },
+  {
+    id: "proteines",
+    label: "💪 Protéines",
+    compare: (a, b) => b.protein - a.protein,
+  },
+  {
+    id: "prix",
+    label: "💸 Prix",
+    compare: (a, b) => a.costValue - b.costValue,
+  },
   { id: "temps", label: "⚡ Temps", compare: (a, b) => a.minutes - b.minutes },
-  { id: "ratio", label: "🏆 Protéines / DH", compare: (a, b) => ratio(b) - ratio(a) },
+  {
+    id: "ratio",
+    label: "🏆 Protéines / DH",
+    compare: (a, b) => ratio(b) - ratio(a),
+  },
 ];
 
 const ratio = (r: RecipeCard) => r.protein / Math.max(r.costValue, 0.01);
-const normalize = (s: string) =>
-  s
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/œ/g, "oe")
-    .toLowerCase()
-    .trim();
+const normalize = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/œ/g, "oe").toLowerCase().trim();
 
 function readUrl(): Filters {
   const p = new URLSearchParams(window.location.search);
@@ -77,7 +128,7 @@ function writeUrl(f: Filters) {
   if (f.equip !== "tous") p.set("materiel", f.equip);
   if (f.q.trim()) p.set("q", f.q.trim());
   if (f.sort !== "defaut") p.set("tri", f.sort);
-  const qs = p.toString();
+  const qs = p.toString().replace(/%2C/g, ",");
   const url = `${window.location.pathname}${qs ? `?${qs}` : ""}`;
   if (url !== `${window.location.pathname}${window.location.search}`) window.history.replaceState(window.history.state, "", url);
 }
@@ -116,10 +167,14 @@ export default function RecipeFilter({ recipes, diets, meals }: { recipes: Recip
   const [f, setF] = useState<Filters>(DEFAULTS);
   const loaded = useRef(false);
   const [pick, setPick] = useState<{ id: string; spin: number } | null>(null);
+  // Sur mobile, régime, matériel et tri se replient pour laisser voir les recettes plus vite.
+  const [more, setMore] = useState(false);
 
   // Lit les filtres partagés dans l'URL au chargement, puis les y reflète à chaque changement.
   useEffect(() => {
-    setF(readUrl());
+    const initial = readUrl();
+    setF(initial);
+    if (initial.diet !== "tous" || initial.equip !== "tous" || initial.sort !== "defaut") setMore(true);
     loaded.current = true;
   }, []);
   useEffect(() => {
@@ -128,7 +183,10 @@ export default function RecipeFilter({ recipes, diets, meals }: { recipes: Recip
 
   const set = <K extends keyof Filters>(k: K, v: Filters[K]) => setF((prev) => ({ ...prev, [k]: v }));
   const toggle = (flag: Flag) =>
-    setF((prev) => ({ ...prev, flags: prev.flags.includes(flag) ? prev.flags.filter((x) => x !== flag) : [...prev.flags, flag] }));
+    setF((prev) => ({
+      ...prev,
+      flags: prev.flags.includes(flag) ? prev.flags.filter((x) => x !== flag) : [...prev.flags, flag],
+    }));
 
   const search = useMemo(() => new Map(recipes.map((r) => [r.id, normalize([r.name, ...r.ingredients].join(" "))])), [recipes]);
 
@@ -148,6 +206,7 @@ export default function RecipeFilter({ recipes, diets, meals }: { recipes: Recip
     return compare ? [...list].sort(compare) : list;
   }, [recipes, f, search]);
 
+  const hiddenActive = Number(f.diet !== "tous") + Number(f.equip !== "tous") + Number(f.sort !== "defaut");
   const active = f.flags.length > 0 || f.diet !== "tous" || f.meal !== "tous" || f.equip !== "tous" || f.q.trim() !== "";
 
   const draw = useCallback(() => {
@@ -199,14 +258,31 @@ export default function RecipeFilter({ recipes, diets, meals }: { recipes: Recip
         </fieldset>
 
         <ChipGroup legend="Repas" options={[{ id: "tous", label: "Tous" }, ...meals]} value={f.meal} onChange={(v) => set("meal", v)} />
-        <ChipGroup legend="Régime" options={[{ id: "tous", label: "Tous" }, ...diets]} value={f.diet} onChange={(v) => set("diet", v)} />
-        <ChipGroup
-          legend="Matériel (je n'ai que…)"
-          options={[{ id: "tous", label: "Peu importe" }, ...EQUIPMENT]}
-          value={f.equip}
-          onChange={(v) => set("equip", v)}
-        />
-        <ChipGroup legend="Trier par" options={SORTS} value={f.sort} onChange={(v) => set("sort", v as SortId)} />
+        <button
+          type="button"
+          aria-expanded={more}
+          aria-controls="more-filters"
+          onClick={() => setMore((m) => !m)}
+          className="flex w-full items-center justify-between rounded-full border border-border bg-background px-4 py-2 text-sm font-semibold sm:hidden"
+        >
+          <span>
+            Régime, matériel et tri
+            {hiddenActive > 0 && <span className="ml-2 rounded-full bg-accent px-2 py-0.5 text-xs text-on-accent">{hiddenActive}</span>}
+          </span>
+          <span aria-hidden="true" className={`transition-transform ${more ? "rotate-180" : ""}`}>
+            ▾
+          </span>
+        </button>
+        <div id="more-filters" className={`${more ? "block" : "hidden"} space-y-5 sm:block`}>
+          <ChipGroup legend="Régime" options={[{ id: "tous", label: "Tous" }, ...diets]} value={f.diet} onChange={(v) => set("diet", v)} />
+          <ChipGroup
+            legend="Matériel (je n'ai que…)"
+            options={[{ id: "tous", label: "Peu importe" }, ...EQUIPMENT]}
+            value={f.equip}
+            onChange={(v) => set("equip", v)}
+          />
+          <ChipGroup legend="Trier par" options={SORTS} value={f.sort} onChange={(v) => set("sort", v as SortId)} />
+        </div>
       </div>
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
@@ -232,7 +308,10 @@ export default function RecipeFilter({ recipes, diets, meals }: { recipes: Recip
           disabled={visible.length === 0}
           className="dice-btn inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 font-semibold text-on-accent shadow-md disabled:opacity-50"
         >
-          Pioche une recette <span aria-hidden="true" className="dice">🎲</span>
+          Pioche une recette{" "}
+          <span aria-hidden="true" className="dice">
+            🎲
+          </span>
         </button>
       </div>
 
@@ -245,9 +324,15 @@ export default function RecipeFilter({ recipes, diets, meals }: { recipes: Recip
       </ul>
       {visible.length === 0 && (
         <div className="mt-6 rounded-2xl border border-dashed border-border p-8 text-center">
-          <p className="text-3xl" aria-hidden="true">🍽️</p>
+          <p className="text-3xl" aria-hidden="true">
+            🍽️
+          </p>
           <p className="mt-2 text-muted">Aucune recette pour cette combinaison pour l&apos;instant.</p>
-          <button type="button" onClick={() => setF(DEFAULTS)} className="mt-4 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold hover:border-accent">
+          <button
+            type="button"
+            onClick={() => setF(DEFAULTS)}
+            className="mt-4 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold hover:border-accent"
+          >
             Retirer les filtres
           </button>
         </div>
