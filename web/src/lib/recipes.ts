@@ -5,6 +5,7 @@ import { healthyRecipes } from "./recipes-healthy";
 import { fitnessBreakfasts } from "./recipes-fitness-matin";
 import { fitnessMains } from "./recipes-fitness-plats";
 import { fitnessInspired } from "./recipes-fitness-inspirees";
+import { expressRecipes } from "./recipes-fitness-express";
 
 export type MealType = "petit-dej" | "plat" | "collation";
 
@@ -82,7 +83,7 @@ const baseRecipes: Recipe[] = [
   { id: "couscous-legumes", name: "Couscous aux 7 légumes", meal: "plat", minutes: 75, ingredients: [{ id: "couscous", grams: 100 }, { id: "pois-chiche", grams: 50 }, { id: "courgette", grams: 120 }, { id: "carotte", grams: 100 }, { id: "navet", grams: 80 }], steps: ["Fais tremper les pois chiches une nuit.", "Fais revenir un oignon dans un filet d'huile avec du gingembre, du curcuma, du sel et du poivre, puis ajoute les pois chiches et couvre d'eau.", "Après 20 minutes, ajoute les carottes et les navets et laisse cuire 20 minutes.", "Ajoute les courgettes et poursuis 15 minutes.", "Pendant ce temps, prépare et cuis le couscous à la vapeur, puis dresse-le avec les légumes et le bouillon."] },
 ];
 
-export const recipes: Recipe[] = [...baseRecipes, ...extraRecipes, ...healthyRecipes, ...fitnessBreakfasts, ...fitnessMains, ...fitnessInspired];
+export const recipes: Recipe[] = [...baseRecipes, ...extraRecipes, ...healthyRecipes, ...fitnessBreakfasts, ...fitnessMains, ...fitnessInspired, ...expressRecipes];
 
 export type Nutrition = { kcal: number; protein: number; carbs: number; fat: number; cost: number };
 

@@ -131,7 +131,7 @@ describe("mode étudiant", () => {
     expect(needsOven({ ...base, steps: [], equipment: ["four"] })).toBe(true);
   });
 
-  it.each(["equilibre", "mediterraneen", "vegetarien", "proteine", "low-carb"] as const)("propose des plats rapides et sans four (%s)", (diet) => {
+  it.each(["equilibre", "mediterraneen", "vegetarien", "proteine", "low-carb", "keto", "vegan", "carnivore"] as const)("propose des plats rapides et sans four (%s)", (diet) => {
     const { t, week } = plan({ ...etudiant, diet });
     expect(week.days).toHaveLength(7);
     expect(Math.abs(avg(week, "kcal") - t.kcal) / t.kcal).toBeLessThan(0.03);
