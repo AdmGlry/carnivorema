@@ -2,6 +2,9 @@ import { foodById } from "./foods";
 import { soukPricePerKg } from "./souk";
 import { extraRecipes } from "./recipes-extra";
 import { healthyRecipes } from "./recipes-healthy";
+import { fitnessBreakfasts } from "./recipes-fitness-matin";
+import { fitnessMains } from "./recipes-fitness-plats";
+import { fitnessInspired } from "./recipes-fitness-inspirees";
 
 export type MealType = "petit-dej" | "plat" | "collation";
 
@@ -16,6 +19,23 @@ export type Recipe = {
   ingredients: { id: string; grams: number }[];
   // étapes de préparation, dans l'ordre
   steps: string[];
+  // "etudiant" : pas cher, peu de matériel ; "fitness" : riche en protéines.
+  tags?: RecipeTag[];
+  // matériel nécessaire, si la recette en demande peu (poêle seule, micro-ondes, sans cuisson…)
+  equipment?: Equipment[];
+};
+
+export type RecipeTag = "etudiant" | "fitness" | "meal-prep";
+export type Equipment = "sans-cuisson" | "micro-ondes" | "poele" | "casserole" | "four" | "mixeur";
+
+export const tagLabels: Record<RecipeTag, string> = { etudiant: "Étudiant", fitness: "Fitness", "meal-prep": "Meal prep" };
+export const equipmentLabels: Record<Equipment, string> = {
+  "sans-cuisson": "Sans cuisson",
+  "micro-ondes": "Micro-ondes",
+  poele: "Poêle",
+  casserole: "Casserole",
+  four: "Four",
+  mixeur: "Mixeur",
 };
 
 const baseRecipes: Recipe[] = [
@@ -62,7 +82,7 @@ const baseRecipes: Recipe[] = [
   { id: "couscous-legumes", name: "Couscous aux 7 légumes", meal: "plat", minutes: 75, ingredients: [{ id: "couscous", grams: 100 }, { id: "pois-chiche", grams: 50 }, { id: "courgette", grams: 120 }, { id: "carotte", grams: 100 }, { id: "navet", grams: 80 }], steps: ["Fais tremper les pois chiches une nuit.", "Fais revenir un oignon dans un filet d'huile avec du gingembre, du curcuma, du sel et du poivre, puis ajoute les pois chiches et couvre d'eau.", "Après 20 minutes, ajoute les carottes et les navets et laisse cuire 20 minutes.", "Ajoute les courgettes et poursuis 15 minutes.", "Pendant ce temps, prépare et cuis le couscous à la vapeur, puis dresse-le avec les légumes et le bouillon."] },
 ];
 
-export const recipes: Recipe[] = [...baseRecipes, ...extraRecipes, ...healthyRecipes];
+export const recipes: Recipe[] = [...baseRecipes, ...extraRecipes, ...healthyRecipes, ...fitnessBreakfasts, ...fitnessMains, ...fitnessInspired];
 
 export type Nutrition = { kcal: number; protein: number; carbs: number; fat: number; cost: number };
 
