@@ -3,13 +3,13 @@
 import Link from "next/link";
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { mad } from "@/lib/foods";
-import { DietId, Goal, Profile, Sex, activityLevels, bmiLabel, computeTargets, diets, goals } from "@/lib/nutrition";
+import { DietId, Goal, Kitchen, Profile, Sex, activityLevels, bmiLabel, computeTargets, diets, goals } from "@/lib/nutrition";
 import { buildWeek } from "@/lib/planner";
 import PlanResults from "./PlanResults";
 import Scale3D from "./Scale3D";
 import { Confetti, tiltHandlers } from "./fun";
 
-const STORAGE_KEY = "mizan-profil-v2";
+const STORAGE_KEY = "mizan-profil-v3";
 
 const defaults: Profile = {
   sex: "femme",
@@ -25,7 +25,7 @@ const defaults: Profile = {
   monthlyBudget: 1500,
 };
 
-type StepId = "sexe" | "age" | "poids" | "taille" | "activite" | "objectif" | "regime" | "allergies" | "courses" | "foyer" | "budget";
+type StepId = "sexe" | "age" | "poids" | "taille" | "activite" | "objectif" | "regime" | "allergies" | "courses" | "cuisine" | "foyer" | "budget";
 
 const STEPS: { id: StepId; title: string; hint: string }[] = [
   { id: "sexe", title: "Tu es…", hint: "Le métabolisme de base n'est pas le même pour un homme et pour une femme." },
@@ -37,6 +37,7 @@ const STEPS: { id: StepId; title: string; hint: string }[] = [
   { id: "regime", title: "Comment tu manges ?", hint: "Tu pourras changer à tout moment." },
   { id: "allergies", title: "Quelque chose à éviter ?", hint: "Coche ce qui s'applique, ou passe." },
   { id: "courses", title: "Tes fruits et légumes, tu les achètes où ?", hint: "Au souk, ils coûtent souvent moins cher. On estime leur prix chaque semaine." },
+  { id: "cuisine", title: "Comment tu cuisines ?", hint: "En mode étudiant, on garde les plats rapides, pas chers et sans four." },
   { id: "foyer", title: "Vous êtes combien à table ?", hint: "La liste de courses sera calculée pour tout le foyer." },
   { id: "budget", title: "Ton budget courses par mois ?", hint: "Pour tout le foyer, en dirhams." },
 ];
@@ -243,6 +244,7 @@ export default function Onboarding() {
     regime: answers.diet !== undefined,
     allergies: true,
     courses: answers.produce !== undefined,
+    cuisine: answers.kitchen !== undefined,
     foyer: p.people >= 1 && p.people <= 12,
     budget: p.monthlyBudget >= 100,
   };
@@ -261,7 +263,7 @@ export default function Onboarding() {
       minimum: Math.round((cheap.weekCostPerPerson / 7) * 30 * p.people / 50) * 50,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step, p.sex, p.age, p.weightKg, p.heightCm, p.activity, p.goal, p.diet, p.glutenFree, p.lactoseFree, p.people]);
+  }, [step, p.sex, p.age, p.weightKg, p.heightCm, p.activity, p.goal, p.diet, p.glutenFree, p.lactoseFree, p.people, p.kitchen]);
 
   // La balance du budget : coût réel du menu au budget choisi, recalculé sans bloquer la saisie.
   const deferredBudget = useDeferredValue(p.monthlyBudget);
@@ -271,7 +273,7 @@ export default function Onboarding() {
     const w = buildWeek(q, computeTargets(q));
     return w.error ? null : (w.weekCostPerPerson / 7) * 30 * p.people;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step, deferredBudget, p.sex, p.age, p.weightKg, p.heightCm, p.activity, p.goal, p.diet, p.glutenFree, p.lactoseFree, p.people]);
+  }, [step, deferredBudget, p.sex, p.age, p.weightKg, p.heightCm, p.activity, p.goal, p.diet, p.glutenFree, p.lactoseFree, p.people, p.kitchen]);
   const budgetTilt = budgetCost === null ? 0 : Math.max(-1, Math.min(1, ((budgetCost - p.monthlyBudget) / Math.max(1, p.monthlyBudget)) * 3));
 
   if (!restored) return <div className="min-h-[60vh]" aria-busy="true" />;
@@ -288,6 +290,7 @@ export default function Onboarding() {
       ...(p.glutenFree ? [{ label: "Sans gluten", step: "allergies" as StepId }] : []),
       ...(p.lactoseFree ? [{ label: "Sans lactose", step: "allergies" as StepId }] : []),
       { label: p.produce === "souk" ? "Légumes au souk" : "Légumes au supermarché", step: "courses" },
+      { label: p.kitchen === "etudiant" ? "Mode étudiant" : "Cuisine complète", step: "cuisine" },
       { label: `${p.people} pers.`, step: "foyer" },
       { label: `${p.monthlyBudget} MAD/mois`, step: "budget" },
     ];
@@ -465,6 +468,19 @@ export default function Onboarding() {
                 title="Au supermarché"
                 text="Prix réels relevés chez Carrefour"
               />
+            </div>
+          )}
+
+          {current.id === "cuisine" && (
+            <div className="grid gap-3">
+              {(
+                [
+                  { value: "complete", badge: "🍳", title: "Cuisine complète", text: "J'ai le temps et un four" },
+                  { value: "etudiant", badge: "🎓", title: "Mode étudiant", text: "Rapide, pas cher, une poêle ou un micro-ondes" },
+                ] as { value: Kitchen; badge: string; title: string; text: string }[]
+              ).map((k) => (
+                <Choice key={k.value} selected={answers.kitchen === k.value} onClick={() => pick("kitchen", k.value)} badge={k.badge} title={k.title} text={k.text} />
+              ))}
             </div>
           )}
 

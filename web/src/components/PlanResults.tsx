@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import { PRICE_DATE, PRICE_SOURCE, categoryLabels, mad } from "@/lib/foods";
-import { Profile, computeTargets, goals } from "@/lib/nutrition";
+import { Profile, STUDENT_MAX_MINUTES, computeTargets, goals } from "@/lib/nutrition";
 import { buildWeek } from "@/lib/planner";
 import { CountUp } from "./fun";
 import { WHOLESALE_DATE } from "@/lib/souk";
@@ -111,6 +111,12 @@ export default function PlanResults({ profile: p, onBudget }: { profile: Profile
             <p className="rounded-2xl border border-accent bg-accent-soft p-4 text-sm text-accent">
               ⚠️ Tes besoins sont élevés : ce menu apporte en moyenne {Math.round(avgKcal)} kcal sur {Math.round(targets.kcal)}. Ajoute des féculents,
               des fruits secs ou augmente ton budget pour combler l&apos;écart.
+            </p>
+          )}
+
+          {p.kitchen === "etudiant" && (
+            <p className="rounded-2xl border border-accent bg-accent-soft p-4 text-sm font-medium text-accent">
+              🎓 Mode étudiant : plats en {STUDENT_MAX_MINUTES} min max, sans four.
             </p>
           )}
 

@@ -218,7 +218,7 @@ export default function Home() {
         </Section>
 
         {/* Calculateur */}
-        <Section id="essayer" kicker="Essaie maintenant" title="11 questions, une minute, ton menu.">
+        <Section id="essayer" kicker="Essaie maintenant" title="12 questions, une minute, ton menu.">
           <div className="grid items-center gap-10 md:grid-cols-2">
             <div>
               <p className="text-lg text-muted">
@@ -243,9 +243,9 @@ export default function Home() {
               <div className="flex items-center gap-3 text-sm text-muted">
                 <span>←</span>
                 <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-border">
-                  <span className="block h-full w-[9%] rounded-full bg-accent" />
+                  <span className="block h-full w-[8%] rounded-full bg-accent" />
                 </span>
-                <span className="tabular-nums">2/11</span>
+                <span className="tabular-nums">2/12</span>
               </div>
               <p className="font-display mt-8 text-3xl font-bold">Quel âge as-tu ?</p>
               <p className="mt-2 text-sm text-muted">Les besoins en calories baissent un peu avec l&apos;âge.</p>
