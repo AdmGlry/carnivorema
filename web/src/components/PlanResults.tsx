@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
+import ProductSheet from "./ProductSheet";
+import { marjane } from "@/lib/marjane";
 import { PRICE_DATE, PRICE_SOURCE, categoryLabels, mad } from "@/lib/foods";
 import { Profile, STUDENT_MAX_MINUTES, computeTargets, goals } from "@/lib/nutrition";
 import { buildWeek } from "@/lib/planner";
@@ -47,6 +49,8 @@ function fittingBudget(p: Profile, start: number) {
 export default function PlanResults({ profile: p, onBudget }: { profile: Profile; onBudget?: (monthly: number) => void }) {
   const targets = useMemo(() => computeTargets(p), [p]);
   const week = useMemo(() => buildWeek(p, targets), [p, targets]);
+  const [sheet, setSheet] = useState<{ id: string; name: string; grams: number } | null>(null);
+  const closeSheet = useCallback(() => setSheet(null), []);
 
   const dayCost = week.error ? 0 : week.weekCostPerPerson / 7;
   const overBudget = dayCost > targets.dailyBudgetPerPerson;
@@ -157,7 +161,7 @@ export default function PlanResults({ profile: p, onBudget }: { profile: Profile
               <p className="font-display font-bold text-accent tabular-nums">{mad(week.shoppingTotal)}</p>
             </div>
             <p className="text-sm text-muted">
-              Pour {p.people} personne{p.people > 1 ? "s" : ""}, 7 jours, arrondie aux paquets du magasin. Hors épices et pain.
+              Pour {p.people} personne{p.people > 1 ? "s" : ""}, 7 jours, arrondie aux paquets du magasin. Touche un produit pour comparer Carrefour, Marjane et le souk.
             </p>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {Object.entries(categoryLabels).map(([cat, label]) => {
@@ -168,14 +172,24 @@ export default function PlanResults({ profile: p, onBudget }: { profile: Profile
                     <p className="text-sm font-semibold text-accent">{label}</p>
                     <ul className="mt-1 space-y-1 text-sm">
                       {items.map((s) => (
-                        <li key={s.id} className="flex justify-between gap-2">
-                          <span>
-                            {s.name}{" "}
-                            <span className="text-muted">
-                              · {s.soukKg !== undefined ? `${s.soukKg.toLocaleString("fr-MA")} kg au souk` : `${s.packs} × ${s.packLabel}`}
+                        <li key={s.id}>
+                          <button
+                            type="button"
+                            onClick={() => setSheet({ id: s.id, name: s.name, grams: s.grams })}
+                            className="group flex w-full items-center justify-between gap-2 rounded-xl px-2 py-1.5 text-left transition-colors hover:bg-accent-soft"
+                          >
+                            <span>
+                              <span className="group-hover:text-accent">{s.name}</span>{" "}
+                              <span className="text-muted">
+                                · {s.soukKg !== undefined ? `${s.soukKg.toLocaleString("fr-MA")} kg au souk` : `${s.packs} × ${s.packLabel}`}
+                              </span>
+                              {marjane[s.id] && <span className="ml-1 rounded bg-accent-soft px-1 text-[10px] font-bold text-accent">+ Marjane</span>}
                             </span>
-                          </span>
-                          <span className="whitespace-nowrap tabular-nums">{mad(s.cost)}</span>
+                            <span className="flex items-center gap-1 whitespace-nowrap tabular-nums">
+                              {mad(s.cost)}
+                              <span aria-hidden="true" className="text-muted group-hover:text-accent">›</span>
+                            </span>
+                          </button>
                         </li>
                       ))}
                     </ul>
@@ -189,6 +203,7 @@ export default function PlanResults({ profile: p, onBudget }: { profile: Profile
                 ` Fruits et légumes : estimation au souk à partir des prix de gros de Casablanca du ${WHOLESALE_DATE}.`}
             </p>
           </div>
+          {sheet && <ProductSheet item={sheet} onClose={closeSheet} />}
         </>
       )}
       <p className="text-xs text-muted">
