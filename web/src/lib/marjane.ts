@@ -32,7 +32,11 @@ export const marjane: Record<string, StoreOffer> = {
   "pomme": { name: "Pomme gala Sachet 1Kg - FILIERE M", priceMad: 10.50, grams: 1000, url: "/courses-en-ligne/11-marche/52-fruits-legumes/271-fruits/40637-pomme-gala-sachet-1kg-filiere-m" },
   "tagine-os": { name: "Tagine de bœuf avec os 500g", priceMad: 44.90, grams: 500, url: "/courses-en-ligne/11-marche/51-boucherie-volaille/274-boucherie/42639-tagine-de-b%C5%93uf-avec-os-500g" },
   "hache": { name: "Viande hachée de bœuf 500g", priceMad: 54.90, grams: 500, url: "/courses-en-ligne/11-marche/51-boucherie-volaille/274-boucherie/5014-viande-hachee-de-b%C5%93uf-500g" },
-  "hache-dinde": { name: "Viande hachée de dinde épicée 500g", priceMad: 25.90, grams: 500, url: "/courses-en-ligne/11-marche/51-boucherie-volaille/275-volailles/5180-viande-hachee-de-dinde-epicee-500g" },
+  "hache-dinde": { name: "Viande hachée de dinde nature 500g", priceMad: 25.90, grams: 500, url: "/courses-en-ligne/11-marche/51-boucherie-volaille/275-volailles/5008-viande-hachee-de-dinde-nature-500g" },
+  "poulet": { name: "Poulet x1 environ 1,25Kg - FILIERE M", priceMad: 56.50, grams: 1250, url: "/courses-en-ligne/11-marche/51-boucherie-volaille/275-volailles/54060-poulet-x1-environ-125kg-filiere-m" },
+  "cuisse": { name: "Haut de cuisse de poulet 200g", priceMad: 7.90, grams: 200, url: "/courses-en-ligne/11-marche/51-boucherie-volaille/275-volailles/5179-haut-de-cuisse-de-poulet-200g" },
+  "filet-poulet": { name: "Filet de poulet 250g", priceMad: 21.90, grams: 250, url: "/courses-en-ligne/11-marche/51-boucherie-volaille/275-volailles/5046-filet-de-poulet-250g" },
+  "escalope-dinde": { name: "Filets de dinde 500g", priceMad: 29.99, grams: 500, url: "/courses-en-ligne/11-marche/51-boucherie-volaille/275-volailles/5006-filets-de-dinde-500g" },
 };
 
 /** Offres comparées pour un aliment : prix au kilo, coût au prorata des grammes et nombre de paquets à acheter. */
