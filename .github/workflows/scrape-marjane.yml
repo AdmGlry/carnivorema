@@ -1,0 +1,42 @@
+name: Relevé des prix Marjane
+
+on:
+  schedule:
+    # Tous les lundis et jeudis à 04:41 UTC
+    - cron: "41 4 * * 1,4"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scrape-marjane
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: scraper/package-lock.json
+      - run: npm ci
+        working-directory: scraper
+      - run: npx vitest run src/marjane.test.ts
+        working-directory: scraper
+      - name: Relever les prix Marjane
+        run: npm run scrape:marjane
+        working-directory: scraper
+      - name: Enregistrer le relevé dans le dépôt
+        run: |
+          git config user.name "mizan-bot"
+          git config user.email "mizan-bot@users.noreply.github.com"
+          git add data/marjane/produits.json
+          git diff --cached --quiet && exit 0
+          git commit -m "Relevé des prix Marjane du $(date -u +%d/%m/%Y)"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
