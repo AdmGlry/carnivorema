@@ -53,6 +53,10 @@ export const marjane: Record<string, StoreOffer> = {
   "spaghetti": { name: "Spaghetti 500g - FAYZ", priceMad: 6.70, grams: 500, url: "/courses-en-ligne/8-epicerie/36-pates-riz-feculents/150-spaghetti-tagliatelles/55866-spaghetti-500g-fayz" },
   "thon": { name: "Thon entier à l'huile végétale 4x 80g - TAMIMA", priceMad: 29.95, grams: 320, url: "/courses-en-ligne/8-epicerie/261-conserves-de-poissons/130-thons-nature-a-lhuile/8112-thon-entier-a-lhuile-vegetale-4x-80g-tamima" },
   "sardines-conserve": { name: "Sardines à l'huile végétale 125g - DELFY", priceMad: 5.50, grams: 125, url: "/courses-en-ligne/8-epicerie/261-conserves-de-poissons/129-sardines/43912-sardines-a-lhuile-vegetale-125g-delfy" },
+  "beurre": { name: "Beurre doux en plaquette 200g - BADAOUIA", priceMad: 19.95, grams: 200, url: "/courses-en-ligne/13-produits-laitiers-%C5%93ufs/61-beurre-margarine-smen/233-beurre/4372-beurre-doux-en-plaquette-200g-badaouia" },
+  "gruyere": { name: "Fromage râpé Emmental 100g - OR BLANC", priceMad: 18.95, grams: 100, url: "/courses-en-ligne/13-produits-laitiers-%C5%93ufs/63-fromage/246-fromages-rapes/4047-fromage-rape-emmental-100g-or-blanc" },
+  "fromage-frais": { name: "Fromage frais à tartiner 190g - JEBLI", priceMad: 14.95, grams: 190, url: "/courses-en-ligne/13-produits-laitiers-%C5%93ufs/63-fromage/241-fromages-a-tartiner/4360-fromage-frais-a-tartiner-190g-jebli" },
+  "raib": { name: "Raib nature 250 - LA FERME DE BOUSKOURA", priceMad: 16.50, grams: 250, url: "/courses-en-ligne/13-produits-laitiers-%C5%93ufs/65-yaourt-dessert-jus-au-lait/305-raib/47605-raib-nature-250la-ferme-de-bouskoura" },
 };
 
 /** Offres comparées pour un aliment : prix au kilo, coût au prorata des grammes et nombre de paquets à acheter. */
