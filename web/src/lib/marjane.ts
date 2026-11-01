@@ -42,6 +42,8 @@ export const marjane: Record<string, StoreOffer> = {
   "lben": { name: "Lben 900g - CHERGUI", priceMad: 10.00, grams: 900, url: "/courses-en-ligne/13-produits-laitiers-%C5%93ufs/64-laits-et-%C5%93ufs/248-lait-lben/7195-lben-900g-chergui" },
   "kefir": { name: "Lait fermenté aux levures de Kéfir et aux probiotiques 320g - JAOUDA", priceMad: 9.95, grams: 320, url: "/courses-en-ligne/13-produits-laitiers-%C5%93ufs/64-laits-et-%C5%93ufs/248-lait-lben/48819-lait-fermente-aux-levures-de-kefir-et-aux-probiotiques-320g-jaouda" },
   "lentilles": { name: "Lentilles 1Kg - CAPRI", priceMad: 12.50, grams: 1000, url: "/courses-en-ligne/8-epicerie/36-pates-riz-feculents/147-legumes-secs-feculents/66188-lentilles-1kg-capri" },
+  "entrecote": { name: "Faux filet de bœuf 250g - FILIERE M", priceMad: 34.99, grams: 250, url: "/courses-en-ligne/11-marche/51-boucherie-volaille/274-boucherie/5010-faux-filet-de-b%C5%93uf-250g-filiere-m" },
+  "foie": { name: "Foie et cœur de bœuf 200g", priceMad: 39.90, grams: 200, url: "/courses-en-ligne/11-marche/51-boucherie-volaille/274-boucherie/42264-foie-et-c%C5%93ur-de-b%C5%93uf-200g" },
 };
 
 /** Offres comparées pour un aliment : prix au kilo, coût au prorata des grammes et nombre de paquets à acheter. */
