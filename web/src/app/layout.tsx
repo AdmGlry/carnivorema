@@ -14,7 +14,7 @@ const body = Manrope({ subsets: ["latin"], variable: "--font-body-face", display
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — mange selon ton corps, ton régime et ton budget`,
+    default: `${SITE_NAME} — ton coach IA sport et nutrition`,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
@@ -27,7 +27,9 @@ export const metadata: Metadata = {
     "prise de masse",
     "liste de courses",
     "prix supermarché Maroc",
-    "recettes marocaines",
+    "recettes protéinées",
+    "coach nutrition IA",
+    "musculation",
     "Carrefour Maroc",
     "Marjane",
   ],
@@ -36,7 +38,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "fr_MA",
     siteName: SITE_NAME,
-    title: `${SITE_NAME} — mange selon ton corps, ton régime et ton budget`,
+    title: `${SITE_NAME} — ton coach IA sport et nutrition`,
     description: SITE_DESCRIPTION,
     url: "/",
   },

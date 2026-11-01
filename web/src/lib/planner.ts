@@ -67,6 +67,8 @@ function studentPenalty(r: Recipe) {
 function recipePenalty(r: Recipe, p: Profile) {
   let pen = (Math.max(0, r.minutes - 30) / 60) * 0.3;
   if (p.kitchen === "etudiant") pen += studentPenalty(r);
+  // Positionnement sport : un plat sous 25 g de protéines recule un peu.
+  if (r.meal === "plat") pen += (Math.max(0, 25 - recipeNutrition(r, 1, p.produce).protein) / 25) * 0.2;
   if (r.meal !== "plat" || p.diet === "carnivore") return pen;
   const veg = r.ingredients.reduce((g, i) => (foodById[i.id].category === "legume" && !STARCHES.has(i.id) ? g + i.grams : g), 0);
   if (veg < 100) pen += veg < 50 ? 0.3 : 0.15;
@@ -116,7 +118,12 @@ function preselect(list: Recipe[], k: number, nutrition: Map<string, Nutrition>,
 }
 
 export function buildWeek(p: Profile, t: Targets, pool: Recipe[] = recipes): WeekPlan {
-  const allowed = pool.filter((r) => recipeAllowed(r, p));
+  let allowed = pool.filter((r) => recipeAllowed(r, p));
+  // Mode étudiant : sans four, promis à l'utilisateur, dès qu'il reste assez de recettes.
+  if (p.kitchen === "etudiant") {
+    const noOven = allowed.filter((r) => !needsOven(r));
+    if (noOven.filter((r) => r.meal === "plat").length >= 7 && noOven.some((r) => r.meal === "petit-dej")) allowed = noOven;
+  }
   const empty: WeekPlan = { days: [], weekCostPerPerson: 0, shopping: [], shoppingTotal: 0 };
   if (allowed.filter((r) => r.meal === "petit-dej").length === 0 || allowed.filter((r) => r.meal === "plat").length < 2) {
     return { ...empty, error: "Pas encore assez de recettes pour cette combinaison de régime et d'allergies." };

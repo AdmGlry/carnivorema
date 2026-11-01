@@ -124,19 +124,19 @@ export default function Home() {
       return `${w.name} au souk · ${r.low.toLocaleString("fr-MA")}–${r.high.toLocaleString("fr-MA")} DH`;
     }),
   ];
-  const heroWords = ["Ton", "corps.", "Ton", "régime."];
+  const heroWords = ["Deviens", "la"];
 
   return (
     <>
       {/* Héros */}
-      <section className="relative mx-auto grid max-w-6xl items-center gap-6 px-4 pb-10 pt-10 md:min-h-[calc(100svh-5rem)] md:grid-cols-[1.15fr_1fr] md:pt-6">
+      <section className="relative mx-auto grid max-w-6xl items-center gap-6 px-4 pb-10 pt-10 md:min-h-[calc(100svh-5rem)] md:grid-cols-[1.25fr_1fr] md:pt-6">
         <div className="text-center md:text-left">
           <span className="glass inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold sm:text-sm">
             <span className="relative flex size-2">
               <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-75" />
               <span className="relative inline-flex size-2 rounded-full bg-accent" />
             </span>
-            🇲🇦 {recipes.length} recettes · prix réels · {diets.length} régimes
+            🤖 Ton coach IA sport &amp; nutrition · {recipes.length} recettes protéinées
           </span>
           <h1 className="mt-7 text-[2.6rem] font-bold leading-[0.95] sm:text-7xl lg:text-[4.75rem]">
             {heroWords.map((w, i) => (
@@ -145,18 +145,22 @@ export default function Home() {
               </span>
             ))}
             <br />
-            <span className="rise text-gradient" style={{ "--i": 4 } as React.CSSProperties}>
-              Ton budget.
+            <span className="rise text-gradient" style={{ "--i": 2 } as React.CSSProperties}>
+              meilleure version
+            </span>{" "}
+            <span className="rise" style={{ "--i": 3 } as React.CSSProperties}>
+              de toi.
             </span>
           </h1>
           <p className="mx-auto mt-7 max-w-lg text-lg text-muted md:mx-0">
-            {BRAND} calcule tes besoins, compose ton menu de la semaine et te donne la liste de courses au vrai prix de ton supermarché ou du souk.
+            {BRAND} est ton coach IA : il calcule tes macros, compose des repas riches en protéines au meilleur prix et s&apos;adapte à ta progression, semaine
+            après semaine.
           </p>
           <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row md:justify-start">
-            <Link href="/commencer" className="btn-glow w-full rounded-2xl bg-accent px-8 py-4 text-center text-lg font-bold text-on-accent sm:w-auto">
-              Calcule mon menu →
+            <Link href="/commencer" className="btn-glow w-full whitespace-nowrap rounded-2xl bg-accent px-8 py-4 text-center text-lg font-bold text-on-accent sm:w-auto">
+              Commence ma transformation →
             </Link>
-            <Link href="/recettes" className="glass w-full rounded-2xl px-8 py-4 text-center font-semibold transition-colors hover:border-accent sm:w-auto">
+            <Link href="/recettes" className="glass w-full whitespace-nowrap rounded-2xl px-6 py-4 text-center font-semibold transition-colors hover:border-accent sm:w-auto">
               🎲 Explorer les recettes
             </Link>
           </div>
@@ -188,6 +192,25 @@ export default function Home() {
           ))}
         </div>
       </div>
+
+      {/* Accroches */}
+      <section className="reveal mx-auto max-w-6xl px-4 pt-20 sm:pt-28">
+        <ul className="grid gap-4 md:grid-cols-3">
+          {[
+            ["💪", "Tu t'entraînes dur.", "Ton assiette doit suivre. Chaque repas est calculé pour tes muscles, pas pour les réseaux."],
+            ["💸", "Plus de protéines. Moins de dirhams.", "On classe chaque recette au gramme de protéine par dirham, au vrai prix de ton supermarché."],
+            ["🤖", "Un coach dans ta poche, 24 h/24.", "Pas de tableur, pas de calculs : l'IA s'occupe de tout et s'ajuste à tes résultats."],
+          ].map(([icon, hook, text]) => (
+            <li key={hook} className={card}>
+              <p className="text-3xl" aria-hidden="true">
+                {icon}
+              </p>
+              <p className="mt-4 font-display text-2xl font-bold leading-tight">{hook}</p>
+              <p className="mt-3 text-muted">{text}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       {/* Bento */}
       <Section id="features" kicker="Tout-en-un" title={<>Ton coach nutrition, <span className="text-gradient">ton comptable</span> et ton marché.</>}>

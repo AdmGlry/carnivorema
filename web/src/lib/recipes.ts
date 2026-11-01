@@ -83,7 +83,14 @@ const baseRecipes: Recipe[] = [
   { id: "couscous-legumes", name: "Couscous aux 7 légumes", meal: "plat", minutes: 75, ingredients: [{ id: "couscous", grams: 100 }, { id: "pois-chiche", grams: 50 }, { id: "courgette", grams: 120 }, { id: "carotte", grams: 100 }, { id: "navet", grams: 80 }], steps: ["Fais tremper les pois chiches une nuit.", "Fais revenir un oignon dans un filet d'huile avec du gingembre, du curcuma, du sel et du poivre, puis ajoute les pois chiches et couvre d'eau.", "Après 20 minutes, ajoute les carottes et les navets et laisse cuire 20 minutes.", "Ajoute les courgettes et poursuis 15 minutes.", "Pendant ce temps, prépare et cuis le couscous à la vapeur, puis dresse-le avec les légumes et le bouillon."] },
 ];
 
-export const recipes: Recipe[] = [...baseRecipes, ...extraRecipes, ...healthyRecipes, ...fitnessBreakfasts, ...fitnessMains, ...fitnessInspired, ...expressRecipes];
+// Positionnement « sport » : on ne garde pas les plats traditionnels (tajines, couscous, harira…),
+// seulement des recettes simples et riches en protéines. Les fiches restent dans les fichiers sources.
+const TRADITIONAL = /tagine|tajine|couscous|harira|bissara|loubia|zaalouk|tanjia|m'chermel|taktouka|ful medames|mujadara|marocain/i;
+export const isTraditional = (r: Recipe) => TRADITIONAL.test(r.name);
+
+export const recipes: Recipe[] = [...baseRecipes, ...extraRecipes, ...healthyRecipes, ...fitnessBreakfasts, ...fitnessMains, ...fitnessInspired, ...expressRecipes].filter(
+  (r) => !isTraditional(r),
+);
 
 export type Nutrition = { kcal: number; protein: number; carbs: number; fat: number; cost: number };
 

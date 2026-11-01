@@ -98,11 +98,11 @@ describe("recipeAllowed", () => {
     }
   });
 
-  it("sans gluten exclut couscous et spaghetti", () => {
+  it("sans gluten exclut les pâtes et la semoule", () => {
     const list = allowed("equilibre", { glutenFree: true });
     for (const r of list) expect(r.ingredients.some((i) => foodById[i.id].gluten)).toBe(false);
     expect(list.some((r) => r.ingredients.some((i) => i.id === "couscous" || i.id === "spaghetti"))).toBe(false);
-    expect(allowed("equilibre").some((r) => r.ingredients.some((i) => i.id === "couscous"))).toBe(true);
+    expect(allowed("equilibre").some((r) => r.ingredients.some((i) => i.id === "spaghetti"))).toBe(true);
   });
 
   it("sans lactose exclut les produits lactés", () => {

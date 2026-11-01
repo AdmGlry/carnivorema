@@ -7,7 +7,7 @@ import { Recipe } from "@/lib/recipes";
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? `https://${BRAND.toLowerCase()}${BRAND_TLD}`).replace(/\/$/, "");
 export const SITE_NAME = `${BRAND}${BRAND_TLD}`;
 export const SITE_DESCRIPTION =
-  "Calcule tes besoins selon ton poids, ta taille et ton objectif, choisis ton régime et reçois ton menu de la semaine avec la liste de courses au vrai prix des supermarchés marocains.";
+  "Ton coach IA sport et nutrition : tes macros, des repas riches en protéines au meilleur prix et un menu qui s'adapte à ta progression. Deviens la meilleure version de toi.";
 
 export const THEME_LIGHT = "#f2f5ec";
 export const THEME_DARK = "#060d0a";
