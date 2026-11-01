@@ -44,6 +44,12 @@ export const marjane: Record<string, StoreOffer> = {
   "lentilles": { name: "Lentilles 1Kg - CAPRI", priceMad: 12.50, grams: 1000, url: "/courses-en-ligne/8-epicerie/36-pates-riz-feculents/147-legumes-secs-feculents/66188-lentilles-1kg-capri" },
   "entrecote": { name: "Faux filet de bœuf 250g - FILIERE M", priceMad: 34.99, grams: 250, url: "/courses-en-ligne/11-marche/51-boucherie-volaille/274-boucherie/5010-faux-filet-de-b%C5%93uf-250g-filiere-m" },
   "foie": { name: "Foie et cœur de bœuf 200g", priceMad: 39.90, grams: 200, url: "/courses-en-ligne/11-marche/51-boucherie-volaille/274-boucherie/42264-foie-et-c%C5%93ur-de-b%C5%93uf-200g" },
+  "riz": { name: "Riz blanc 1kg - FAYZ", priceMad: 12.95, grams: 1000, url: "/courses-en-ligne/8-epicerie/36-pates-riz-feculents/149-riz-risotto/47041-riz-blanc-1kg-fayz" },
+  "couscous": { name: "Couscous moyen 1Kg - FAYZ", priceMad: 9.50, grams: 1000, url: "/courses-en-ligne/8-epicerie/36-pates-riz-feculents/146-couscous/61148-couscous-moyen-1kg-fayz" },
+  "semoule": { name: "Couscous fin 1Kg - FAYZ", priceMad: 9.50, grams: 1000, url: "/courses-en-ligne/8-epicerie/36-pates-riz-feculents/146-couscous/61150-couscous-fin-1kg-fayz" },
+  "haricot-blanc": { name: "Haricots blancs 1kg - CAPRI", priceMad: 23.95, grams: 1000, url: "/courses-en-ligne/8-epicerie/36-pates-riz-feculents/147-legumes-secs-feculents/69087-haricots-blancs-1kg-capri" },
+  "pois-chiche": { name: "Pois chiches 750g - FAYZ", priceMad: 10.95, grams: 750, url: "/courses-en-ligne/8-epicerie/36-pates-riz-feculents/147-legumes-secs-feculents/36966-pois-chiches-750g-fayz" },
+  "feves": { name: "Fèves cassées 1kg - FAYZ", priceMad: 14.95, grams: 1000, url: "/courses-en-ligne/8-epicerie/36-pates-riz-feculents/147-legumes-secs-feculents/29053-feves-cassees-1kg-fayz" },
 };
 
 /** Offres comparées pour un aliment : prix au kilo, coût au prorata des grammes et nombre de paquets à acheter. */
