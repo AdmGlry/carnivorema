@@ -50,6 +50,7 @@ export const marjane: Record<string, StoreOffer> = {
   "haricot-blanc": { name: "Haricots blancs 1kg - CAPRI", priceMad: 23.95, grams: 1000, url: "/courses-en-ligne/8-epicerie/36-pates-riz-feculents/147-legumes-secs-feculents/69087-haricots-blancs-1kg-capri" },
   "pois-chiche": { name: "Pois chiches 750g - FAYZ", priceMad: 10.95, grams: 750, url: "/courses-en-ligne/8-epicerie/36-pates-riz-feculents/147-legumes-secs-feculents/36966-pois-chiches-750g-fayz" },
   "feves": { name: "Fèves cassées 1kg - FAYZ", priceMad: 14.95, grams: 1000, url: "/courses-en-ligne/8-epicerie/36-pates-riz-feculents/147-legumes-secs-feculents/29053-feves-cassees-1kg-fayz" },
+  "spaghetti": { name: "Spaghetti 500g - FAYZ", priceMad: 6.70, grams: 500, url: "/courses-en-ligne/8-epicerie/36-pates-riz-feculents/150-spaghetti-tagliatelles/55866-spaghetti-500g-fayz" },
 };
 
 /** Offres comparées pour un aliment : prix au kilo, coût au prorata des grammes et nombre de paquets à acheter. */
