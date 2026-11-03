@@ -57,6 +57,7 @@ export const marjane: Record<string, StoreOffer> = {
   "gruyere": { name: "Fromage râpé Emmental 100g - OR BLANC", priceMad: 18.95, grams: 100, url: "/courses-en-ligne/13-produits-laitiers-%C5%93ufs/63-fromage/246-fromages-rapes/4047-fromage-rape-emmental-100g-or-blanc" },
   "fromage-frais": { name: "Fromage frais à tartiner 190g - JEBLI", priceMad: 14.95, grams: 190, url: "/courses-en-ligne/13-produits-laitiers-%C5%93ufs/63-fromage/241-fromages-a-tartiner/4360-fromage-frais-a-tartiner-190g-jebli" },
   "raib": { name: "Raib nature 250 - LA FERME DE BOUSKOURA", priceMad: 16.50, grams: 250, url: "/courses-en-ligne/13-produits-laitiers-%C5%93ufs/65-yaourt-dessert-jus-au-lait/305-raib/47605-raib-nature-250la-ferme-de-bouskoura" },
+  "miel": { name: "Miel toutes fleurs 850g - JNANE EL AASSAL", priceMad: 60.00, grams: 850, url: "/courses-en-ligne/12-petit-dejeuner/263-miels-et-sirops/57-miels/36170-miel-toutes-fleurs-850g-jnane-el-aassal" },
 };
 
 /** Offres comparées pour un aliment : prix au kilo, coût au prorata des grammes et nombre de paquets à acheter. */
