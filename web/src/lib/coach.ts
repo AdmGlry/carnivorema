@@ -106,7 +106,7 @@ export function checkIn(s: CoachState, today: string, plannedKcal: number, targe
   const gapKgPerWeek = targetKgPerWeek - trendKgPerWeek;
   const raw = (gapKgPerWeek * KCAL_PER_KG) / 7;
   const adjust = Math.round(Math.max(-MAX_WEEKLY_CHANGE, Math.min(MAX_WEEKLY_CHANGE, raw)) / 10) * 10;
-  const fmt = (x: number) => `${x > 0 ? "+" : ""}${x.toLocaleString("fr-FR", { maximumFractionDigits: 2 })} kg/sem.`;
+  const fmt = (x: number) => `${x > 0 ? "+" : ""}${x.toLocaleString("fr-FR", { maximumFractionDigits: 2 })} kg par semaine`;
   const message =
     Math.abs(adjust) < 30
       ? `Parfait : tu évolues à ${fmt(trendKgPerWeek)}, pile dans ton objectif. On ne change rien.`

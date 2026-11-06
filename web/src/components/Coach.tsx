@@ -139,7 +139,7 @@ export default function Coach() {
     setParty((n) => n + 1);
   };
 
-  const card = "glass rounded-[1.75rem] p-6";
+  const card = "glass min-w-0 rounded-[1.75rem] p-6";
   const pct = (a: number, b: number) => `${Math.min(100, Math.round((a / b) * 100))}%`;
 
   return (
@@ -164,7 +164,7 @@ export default function Coach() {
         </div>
       </div>
 
-      <div className="mt-8 grid gap-4 md:grid-cols-5">
+      <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-5">
         {/* Aujourd'hui */}
         <section className={`${card} md:col-span-3`} aria-labelledby="today-title">
           <div className="flex items-center justify-between gap-3">
@@ -279,7 +279,7 @@ export default function Coach() {
         </section>
 
         {/* Bilan */}
-        <section className={`ring-gradient rounded-[1.75rem] bg-card p-6 md:col-span-5`} aria-labelledby="bilan-title">
+        <section className="ring-gradient min-w-0 rounded-[1.75rem] bg-card p-6 md:col-span-5" aria-labelledby="bilan-title">
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div className="max-w-2xl">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">Bilan du coach</p>

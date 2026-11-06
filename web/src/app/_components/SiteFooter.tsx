@@ -12,7 +12,7 @@ export default function SiteFooter() {
             {BRAND}
             {BRAND_TLD}
           </p>
-          <p className="mt-1">Mange selon ton corps, ton régime et ton budget.</p>
+          <p className="mt-1">Ton coach IA sport et nutrition. Deviens la meilleure version de toi.</p>
           <p className="mt-3">© {new Date().getFullYear()} {BRAND} — Tous droits réservés.</p>
         </div>
         <nav aria-label="Régimes">
