@@ -101,6 +101,8 @@ export type Profile = {
   monthlyBudget: number;
   // Où sont achetés les fruits et légumes (supermarché par défaut).
   produce?: ProduceSource;
+  // Correction des calories décidée par le coach après les pesées (kcal par jour, positive ou négative).
+  kcalAdjust?: number;
   // Cuisine complète par défaut ; « etudiant » : peu de temps, peu de matériel, petit budget.
   kitchen?: Kitchen;
 };
@@ -146,8 +148,8 @@ export function computeTargets(p: Profile): Targets {
 
   const floor = p.sex === "homme" ? 1500 : 1200;
   const delta = goals.find((g) => g.value === goal)!.delta;
-  const kcal = Math.max(floor, tdee + delta);
-  if (tdee + delta < floor) warnings.push(`On ne descend pas sous ${floor} kcal par jour, par sécurité.`);
+  const kcal = Math.max(floor, tdee + delta + (p.kcalAdjust ?? 0));
+  if (tdee + delta + (p.kcalAdjust ?? 0) < floor) warnings.push(`On ne descend pas sous ${floor} kcal par jour, par sécurité.`);
 
   const diet = dietById[p.diet];
   const baseProtein = goal === "maintenir" ? 1.4 : goal === "prendre" ? 1.8 : 1.8;
