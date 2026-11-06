@@ -48,7 +48,7 @@ export function Confetti({ fire }: { fire: boolean }) {
     c.width = innerWidth * dpr;
     c.height = innerHeight * dpr;
     ctx.scale(dpr, dpr);
-    const colors = ["#e0402f", "#f2c14e", "#3f8f3a", "#f08a24", "#d4a03c"];
+    const colors = ["#c8f542", "#ffb13b", "#ff6b5b", "#40c4a0", "#ffffff"];
     const parts = Array.from({ length: 140 }, () => ({
       x: innerWidth / 2 + (Math.random() - 0.5) * 120,
       y: innerHeight * 0.35,

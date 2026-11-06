@@ -124,6 +124,16 @@ export default function PlanResults({ profile: p, onBudget }: { profile: Profile
             </p>
           )}
 
+          <Link
+            href="/coach"
+            className="ring-gradient flex items-center justify-between gap-4 rounded-2xl bg-card p-5 transition-transform hover:-translate-y-0.5"
+          >
+            <span>
+              <span className="block font-display text-lg font-bold">🤖 Suis ton plan avec ton coach</span>
+              <span className="block text-sm text-muted">Coche tes repas, pèse-toi : tes calories s&apos;ajustent chaque semaine selon tes vrais résultats.</span>
+            </span>
+            <span className="shrink-0 font-bold text-accent">Go →</span>
+          </Link>
           <div className="rounded-2xl border border-border bg-card p-6">
             <h3 className="font-display text-lg font-bold">Ton menu de la semaine</h3>
             <p className="text-sm text-muted">Assiettes complètes et rapides en priorité. Portions ajustées à tes calories, valeurs par personne. Clique sur un plat pour la recette.</p>

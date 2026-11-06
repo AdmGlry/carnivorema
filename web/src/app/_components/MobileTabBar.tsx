@@ -7,8 +7,8 @@ const tabs = [
   { href: "/", label: "Accueil", icon: "🏠" },
   { href: "/recettes", label: "Recettes", icon: "🍳" },
   { href: "/commencer", label: "Mon menu", icon: "⚖️", main: true },
+  { href: "/coach", label: "Coach", icon: "🤖" },
   { href: "/prix-du-souk", label: "Souk", icon: "🥕" },
-  { href: "/prix", label: "Prix", icon: "🏷️" },
 ];
 
 // Barre d'onglets façon application, sur mobile uniquement.
